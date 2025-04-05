@@ -11,13 +11,15 @@ namespace imdbdrinks_ratingsmodule
 
     public sealed partial class MainWindow : Window
     {
-       
+
+        private readonly IConfiguration _configuration;
         // Public properties for binding.
         public RatingViewModel ViewModel { get; set; }
         public ReviewViewModel ReviewVM { get; set; }
 
         public MainWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
         {
+            _configuration = configuration;
             ViewModel = ratingViewModel;
             ReviewVM = reviewViewModel;
 
@@ -49,7 +51,7 @@ namespace imdbdrinks_ratingsmodule
         {
             if (ViewModel.SelectedRating != null)
             {
-                var reviewWindow = new ReviewWindow(ViewModel, ReviewVM);
+                var reviewWindow = new ReviewWindow(_configuration, ViewModel, ReviewVM);
                 reviewWindow.Activate();
             }
             else

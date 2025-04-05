@@ -9,11 +9,14 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Media.Imaging;
 using System.IO;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace imdbdrinks_ratingsmodule
 {
     public sealed partial class AIReviewWindow : Window
     {
+        private readonly string API_Key;
+
         private readonly string[] SpinnerGifs = new[]
         {
             "Assets/pizzaSpin.gif",
@@ -30,8 +33,14 @@ namespace imdbdrinks_ratingsmodule
         private readonly Action<string> _onReviewGenerated;
         private string _apiKeyLoadError;
 
-        public AIReviewWindow(Action<string> onReviewGenerated)
+        public AIReviewWindow(IConfiguration config, Action<string> onReviewGenerated)
         {
+            API_Key = config["OPENROUTER_API_KEY"];
+            if (string.IsNullOrEmpty(API_Key))
+            {
+                throw new InvalidOperationException("API key is missing or empty.");
+            }
+
             this.InitializeComponent();
             _client = new HttpClient();
             _onReviewGenerated = onReviewGenerated;
@@ -68,7 +77,6 @@ namespace imdbdrinks_ratingsmodule
         {
             try
             {
-                string ApiKey = LoadApiKey();
              
                 string prompt = $"Write a short and natural-sounding review (2–3 sentences) that includes the following words:  \"{keywords}\". The review should describe the drink realistically, as if written by a genuine customer. Do not mention the name of the drink anywhere—just focus on how it tastes, feels, or is experienced. All given words must be used exactly as they are, and the review should feel coherent and honest.\r\n";
 
@@ -87,7 +95,7 @@ namespace imdbdrinks_ratingsmodule
                     Content = new StringContent(jsonRequest, Encoding.UTF8, "application/json")
                 };
 
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", ApiKey);
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", API_Key);
                 request.Headers.Add("HTTP-Referer", "https://your-site.com"); // Optional
                 request.Headers.Add("X-Title", "IMDBDrinks App"); // Optional
 
@@ -139,37 +147,6 @@ namespace imdbdrinks_ratingsmodule
             this.Close();
 
         }
-
-        private string LoadApiKey()
-        {
-            try
-            {
-                string path = Path.Combine(AppContext.BaseDirectory, "apikey.json");
-
-                if (!File.Exists(path))
-                {
-                    _apiKeyLoadError = "apikey.json not found in output directory.";
-                    return string.Empty;
-                }
-
-                string json = File.ReadAllText(path);
-                var doc = JsonDocument.Parse(json);
-
-                if (doc.RootElement.TryGetProperty("OPENROUTER_API_KEY", out var apiKeyElement))
-                {
-                    return apiKeyElement.GetString() ?? string.Empty;
-                }
-
-                _apiKeyLoadError = "API key property 'OPENROUTER_API_KEY' not found in apikey.json.";
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                _apiKeyLoadError = $"Could not load API key.\nDetails: {ex.Message}";
-                return string.Empty;
-            }
-        }
-
 
     }
 }
