@@ -4,6 +4,8 @@ using imdbdrinks_ratingsmodule.Services;
 using imdbdrinks_ratingsmodule.ViewModels;
 using imdbdrinks_ratingsmodule.Domain;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 namespace imdbdrinks_ratingsmodule
 {
 
@@ -14,15 +16,16 @@ namespace imdbdrinks_ratingsmodule
         public RatingViewModel ViewModel { get; set; }
         public ReviewViewModel ReviewVM { get; set; }
 
-        public MainWindow()
+        public MainWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
         {
+            ViewModel = ratingViewModel;
+            ReviewVM = reviewViewModel;
+
             this.InitializeComponent();
 
             // Unique connection string for MySql database (change accordingly)
-            string connection = "Server=localhost;Database=imdb;Trusted_Connection=True;TrustServerCertificate=True;";
+            Debug.WriteLine(configuration);
 
-            var reviewRepo = new DatabaseReviewRepository(connection);
-            var ratingRepo = new DatabaseRatingRepository(connection);
 
 
             // Create repository instances.
@@ -30,12 +33,8 @@ namespace imdbdrinks_ratingsmodule
             //var reviewRepo = new HardCodedReviewRepository();
 
             // Create service instances.
-            var ratingService = new RatingService(ratingRepo);
-            var reviewService = new ReviewService(reviewRepo);
 
             // Instantiate ViewModels.
-            ViewModel = new RatingViewModel(ratingService);
-            ReviewVM = new ReviewViewModel(reviewService);
 
             // Load ratings for product ID 100.
             ViewModel.LoadRatingsForProduct(100);

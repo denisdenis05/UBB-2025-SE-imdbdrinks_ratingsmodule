@@ -1,4 +1,5 @@
 ﻿using imdbdrinks_ratingsmodule.Domain;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -10,9 +11,9 @@ namespace imdbdrinks_ratingsmodule.Repositories
     {
         private readonly string _connectionString;
 
-        public DatabaseReviewRepository(string connectionString)
+        public DatabaseReviewRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _connectionString = configuration["DbConnection"];
         }
 
         public void Delete(long reviewId)
