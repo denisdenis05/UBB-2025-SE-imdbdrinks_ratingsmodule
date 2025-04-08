@@ -37,7 +37,7 @@
        Grid.Row="0"/>
 
             <ListView Grid.Row="1"
-        ItemsSource="{x:Bind ViewModel.Ratings, Mode=TwoWay}"
+        ItemsSource="{x:Bind RatingViewModel.Ratings, Mode=TwoWay}"
         SelectionMode="Single"
         SelectionChanged="RatingSelection_Changed"
         Background="White">
@@ -87,7 +87,7 @@
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Assets/FullBottle.png" Width="18"  HorizontalAlignment="Left" Margin="20,0,10,0"/>
                     <TextBlock FontFamily="{StaticResource FontFamily}" FontSize="20px" VerticalAlignment="Center" 
-                           Text="{x:Bind ViewModel.AverageRating, Mode=OneWay}" />
+                           Text="{x:Bind RatingViewModel.AverageRating, Mode=OneWay}" />
                 </StackPanel>
             </StackPanel>
 
@@ -122,8 +122,8 @@
                 Height="30" Width="150" Click="AddReview_Click" Margin="0,0,20,0" Padding="0,0,0,0" BorderThickness="0" 
                 Foreground="#FFFFEE" Background="#313131" FontFamily="{StaticResource FontFamily}" FontWeight="SemiBold" />
 
-            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{x:Bind ReviewVM.Reviews, Mode=OneWay}"
-                SelectedItem="{x:Bind ReviewVM.SelectedReview, Mode=TwoWay}" Background="#cacaca">
+            <ListView Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{x:Bind ReviewViewModel.Reviews, Mode=OneWay}"
+                SelectedItem="{x:Bind ReviewViewModel.SelectedReview, Mode=TwoWay}" Background="#cacaca">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="domain:Review">
                         <StackPanel>

@@ -14,14 +14,14 @@ namespace imdbdrinks_ratingsmodule
 
         private readonly IConfiguration _configuration;
         // Public properties for binding.
-        public RatingViewModel ViewModel { get; set; }
-        public ReviewViewModel ReviewVM { get; set; }
+        public RatingViewModel RatingViewModel { get; }
+        public ReviewViewModel ReviewViewModel { get; }
 
         public MainWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
         {
             _configuration = configuration;
-            ViewModel = ratingViewModel;
-            ReviewVM = reviewViewModel;
+            RatingViewModel = ratingViewModel;
+            ReviewViewModel = reviewViewModel;
 
             this.InitializeComponent();
 
@@ -38,52 +38,55 @@ namespace imdbdrinks_ratingsmodule
 
             // Instantiate ViewModels.
 
-            // Load ratings for product ID 100.
-            ViewModel.LoadRatingsForProduct(100);
-            //if (ViewModel.Ratings.Count > 0)
-            //{
-            //    ViewModel.SelectedRating = ViewModel.Ratings[0];
-            //    ReviewVM.LoadReviewsForRating(ViewModel.SelectedRating.RatingId);
-            //}
+            // Load initial data for product ID 100
+            LoadInitialData();
         }
 
+        /// <summary>
+        /// Loads initial data for the main window
+        /// </summary>
+        private void LoadInitialData()
+        {
+            const int DefaultProductId = 100;
+            RatingViewModel.LoadRatingsForProduct(DefaultProductId);
+        }
+
+        /// <summary>
+        /// Opens the review window when the add review button is clicked
+        /// </summary>
         private void AddReview_Click(object sender, RoutedEventArgs e)
         {
-            if (ViewModel.SelectedRating != null)
+            if (RatingViewModel.SelectedRating != null)
             {
-                var reviewWindow = new ReviewWindow(_configuration, ViewModel, ReviewVM);
+                var reviewWindow = new ReviewWindow(_configuration, RatingViewModel, ReviewViewModel);
                 reviewWindow.Activate();
             }
             else
             {
                 NoRatingSelectedDialog.ShowAsync();
             }
-            return;
-
         }
 
+        /// <summary>
+        /// Opens the rating window when the add rating button is clicked
+        /// </summary>
         private void AddRating_Click(object sender, RoutedEventArgs e)
         {
-
-            var ratingWindow = new RatingWindow(ViewModel);
-            ViewModel.SelectedRating = null;
+            var ratingWindow = new RatingWindow(RatingViewModel);
+            RatingViewModel.SelectedRating = null;
             ratingWindow.Activate();
         }
      
+        /// <summary>
+        /// Updates the selected rating and loads associated reviews when a rating is selected
+        /// </summary>
         private void RatingSelection_Changed(object sender, RoutedEventArgs e)
         {
-            var listView = sender as ListView;
-
-            if (listView != null)
+            if (sender is ListView listView && listView.SelectedIndex >= 0)
             {
-                var selectedIndex = listView.SelectedIndex;
-
-                if (selectedIndex >= 0)
-                {
-                    var selectedRating = ViewModel.Ratings[selectedIndex];
-                    ViewModel.SelectedRating = selectedRating;
-                    ReviewVM.LoadReviewsForRating(selectedRating.RatingId);
-                }
+                var selectedRating = RatingViewModel.Ratings[listView.SelectedIndex];
+                RatingViewModel.SelectedRating = selectedRating;
+                ReviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
             }
         }
 
