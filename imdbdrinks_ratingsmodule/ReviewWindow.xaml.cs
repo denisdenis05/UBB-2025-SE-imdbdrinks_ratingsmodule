@@ -14,6 +14,7 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.ViewModels;
+using Microsoft.Extensions.Configuration;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -25,12 +26,14 @@ namespace imdbdrinks_ratingsmodule
     /// </summary>
     public sealed partial class ReviewWindow : Window
     {
-
+        private IConfiguration _configuration;
         public RatingViewModel ViewModel { get; set; }
         public ReviewViewModel ReviewVM { get; set; }
 
-        public ReviewWindow(RatingViewModel viewModel, ReviewViewModel reviewVM)
+        public ReviewWindow(IConfiguration configuration, RatingViewModel viewModel, ReviewViewModel reviewVM)
         {
+            _configuration = configuration;
+
             this.InitializeComponent();
             ViewModel = viewModel;
             ReviewVM = reviewVM;
@@ -78,7 +81,7 @@ namespace imdbdrinks_ratingsmodule
         {
             string aiGeneratedReview = "This is an AI-generated review based on your input.";
 
-            var aiReviewWindow = new AIReviewWindow(OnAIReviewGenerated);
+            var aiReviewWindow = new AIReviewWindow(_configuration, OnAIReviewGenerated);
             aiReviewWindow.Activate();
         }
 

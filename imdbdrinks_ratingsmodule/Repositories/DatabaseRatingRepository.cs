@@ -1,8 +1,10 @@
 ﻿using imdbdrinks_ratingsmodule.Domain;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
@@ -10,9 +12,18 @@ namespace imdbdrinks_ratingsmodule.Repositories
     {
         private readonly string _connectionString;
 
-        public DatabaseRatingRepository(string connectionString)
+        public DatabaseRatingRepository(IConfiguration configuration)
         {
-            _connectionString = connectionString;
+            _connectionString = configuration["DbConnection"];
+            if (string.IsNullOrEmpty(_connectionString))
+            {
+                throw new InvalidOperationException("Database connection string is missing or empty.");
+            }
+
+            Debug.WriteLine("HI");
+            Debug.WriteLine(_connectionString);
+            Debug.WriteLine("HI");
+            Debug.WriteLine(configuration);
         }
 
         public void Delete(long ratingId)
