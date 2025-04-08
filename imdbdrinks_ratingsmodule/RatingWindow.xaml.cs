@@ -4,113 +4,83 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace imdbdrinks_ratingsmodule
 {
-    public sealed partial class RatingWindow : Window, INotifyPropertyChanged
+    public sealed partial class RatingWindow : Window
     {
-        public ObservableCollection<Bottle> Bottles { get; set; }
-        public int ratingScore { get; set; }
-
-        private string emptyBottlePath = "ms-appx:///Assets/Bottle.png";
-        private string filledBottlePath = "ms-appx:///Assets/FullBottle.png";
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private RatingViewModel _ratingViewModel;
+        private int _selectedRating;
+        private readonly RatingViewModel _ratingViewModel;
 
         public RatingWindow(RatingViewModel viewModel)
         {
             this.InitializeComponent();
-            Bottles = new ObservableCollection<Bottle>();
-
-            // Initialize 5 bottles in an empty state
-            for (int i = 0; i < 5; i++)
-            {
-                Bottles.Add(new Bottle { ImageSource = emptyBottlePath });
-            }
-
-            rootGrid.DataContext = this;
             _ratingViewModel = viewModel;
+            _selectedRating = 0;
         }
 
-        private void Bottle_Click(object sender, TappedRoutedEventArgs e)
+        private void UpdateBottles(int rating)
         {
-            if (sender is Image img && img.DataContext is Bottle bottle)
-            {
-                int index = Bottles.IndexOf(bottle);
+            // Update visibility of all bottles based on the selected rating
+            Bottle1Full.Visibility = rating >= 1 ? Visibility.Visible : Visibility.Collapsed;
+            Bottle2Full.Visibility = rating >= 2 ? Visibility.Visible : Visibility.Collapsed;
+            Bottle3Full.Visibility = rating >= 3 ? Visibility.Visible : Visibility.Collapsed;
+            Bottle4Full.Visibility = rating >= 4 ? Visibility.Visible : Visibility.Collapsed;
+            Bottle5Full.Visibility = rating >= 5 ? Visibility.Visible : Visibility.Collapsed;
 
-                for (int i = 0; i < Bottles.Count; i++)
-                {
-                    Bottles[i].ImageSource = i <= index ? filledBottlePath : emptyBottlePath;
-                }
-                ratingScore = index + 1;
-            }
+            // Update the rating text
+            _selectedRating = rating;
+            RatingTextBlock.Text = $"{_selectedRating} bottle{(_selectedRating != 1 ? "s" : "")}";
+            RatingTextBlock.Visibility = _selectedRating > 0 ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        //private void RateButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // If no bottle was clicked, ratingScore will be 0. Exit the method to prevent an error.
-        //    if (ratingScore == 0)
-        //    {
-        //        // Optionally, show a message to the user here.
-        //        return;
-        //    }
+        private void Bottle1_Click(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateBottles(1);
+        }
 
-        //    Rating rating = new Rating();
-        //    rating.ProductId = 100; // mock value, should be replaced with actual product id
-        //    rating.RatingValue = ratingScore;
-        //    rating.UserId = _ratingViewModel.Ratings.Count + 1; // mock value, should be replaced with actual user id
+        private void Bottle2_Click(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateBottles(2);
+        }
 
-        //    _ratingViewModel.AddRating(rating);
-        //    this.Close();
-        //}
+        private void Bottle3_Click(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateBottles(3);
+        }
+
+        private void Bottle4_Click(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateBottles(4);
+        }
+
+        private void Bottle5_Click(object sender, TappedRoutedEventArgs e)
+        {
+            UpdateBottles(5);
+        }
 
         private void RateButton_Click(object sender, RoutedEventArgs e)
         {
-            // If no bottle was clicked, ratingScore will be 0. Exit the method to prevent an error.
-            if (ratingScore == 0)
+            // Only proceed if a rating has been selected
+            if (_selectedRating == 0)
             {
-                // Optionally, show a message to the user here.
                 return;
             }
 
             Rating rating = new Rating
             {
                 ProductId = 100, // mock value, should be replaced with actual product id
-                RatingValue = ratingScore,
+                RatingValue = _selectedRating,
                 UserId = _ratingViewModel.Ratings.Count + 1 // mock value, should be replaced with actual user id
             };
 
             _ratingViewModel.AddRating(rating);
-
-            // Remove the line that resets the selected rating:
-            // if (_ratingViewModel.Ratings != null && _ratingViewModel.Ratings.Count > 0)
-            // {
-            //     _ratingViewModel.SelectedRating = _ratingViewModel.Ratings[0];
-            // }
-
             this.Close();
         }
-
-
-
-    }
-
-    public class Bottle : INotifyPropertyChanged
-    {
-        private string _imageSource;
-        public string ImageSource
+        
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            get => _imageSource;
-            set
-            {
-                _imageSource = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
-            }
+            this.Close();
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
