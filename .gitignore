@@ -33,5 +33,4 @@ bld/
 #wwwroot/
 
 apikey.json
-appsettings.json
-
+imdbdrinks_ratingsmodule/appsettings.json

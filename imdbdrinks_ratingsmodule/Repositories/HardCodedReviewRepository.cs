@@ -98,15 +98,15 @@ namespace imdbdrinks_ratingsmodule.Repositories
             }
         }
 
-        public Review FindById(long reviewId) =>
+        public Review GetReviewById(int reviewId) =>
             _reviews.FirstOrDefault(r => r.ReviewId == reviewId);
 
-        public IEnumerable<Review> FindAll() => _reviews;
+        public IEnumerable<Review> GetAllReviews() => _reviews;
 
-        public IEnumerable<Review> FindByRatingId(long ratingId) =>
+        public IEnumerable<Review> GetReviewsByRatingId(int ratingId) =>
             _reviews.Where(r => r.RatingId == ratingId);
 
-        public Review Save(Review review)
+        public Review AddOrUpdateReview(Review review)
         {
             var existing = _reviews.FirstOrDefault(r => r.ReviewId == review.ReviewId);
             if (existing != null)
@@ -125,7 +125,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             return review;
         }
 
-        public void Delete(long reviewId)
+        public void DeleteReviewById(int reviewId)
         {
             var review = _reviews.FirstOrDefault(r => r.ReviewId == reviewId);
             if (review != null)

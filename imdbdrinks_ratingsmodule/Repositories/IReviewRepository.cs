@@ -5,10 +5,10 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     public interface IReviewRepository
     {
-        Review FindById(long reviewId);
-        IEnumerable<Review> FindAll();
-        IEnumerable<Review> FindByRatingId(long ratingId);
-        Review Save(Review review);
-        void Delete(long reviewId);
+        Review GetReviewById(int reviewId);
+        IEnumerable<Review> GetAllReviews();
+        IEnumerable<Review> GetReviewsByRatingId(int ratingId);
+        Review AddOrUpdateReview(Review review);
+        void DeleteReviewById(int reviewId);
     }
 }
