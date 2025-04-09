@@ -3,27 +3,25 @@
     using System;
     using System.Collections.Generic;
     using imdbdrinks_ratingsmodule.Domain;
+    using imdbdrinks_ratingsmodule.Repositories.Queries;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
 
     public class DatabaseReviewRepository : IReviewRepository
     {
-        private readonly string connectionString;
+        private readonly DatabaseConnection databaseConnection;
 
-        public DatabaseReviewRepository(IConfiguration configuration)
+        public DatabaseReviewRepository(DatabaseConnection databaseConnection)
         {
-            ArgumentNullException.ThrowIfNull(configuration);
-
-            this.connectionString = configuration["DbConnection"]
-                ?? throw new InvalidOperationException("DbConnection configuration is missing or null.");
+            this.databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
         }
 
         public void DeleteReviewById(int reviewId)
         {
-            using var connection = new SqlConnection(this.connectionString);
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = new SqlCommand("DELETE FROM Reviews WHERE ReviewId = @ReviewId", connection);
+            using var command = new SqlCommand(ReviewQueries.DeleteReviewByIdQuery, connection);
             command.Parameters.AddWithValue("@ReviewId", reviewId);
             command.ExecuteNonQuery();
         }
@@ -32,10 +30,10 @@
         {
             var reviews = new List<Review>();
 
-            using var connection = new SqlConnection(this.connectionString);
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = new SqlCommand("SELECT * FROM Reviews", connection);
+            using var command = new SqlCommand(ReviewQueries.GetAllReviewsQuery, connection);
 
             using var reader = command.ExecuteReader();
             while (reader.Read())
@@ -56,10 +54,10 @@
 
         public Review GetReviewById(int reviewId)
         {
-            using var connection = new SqlConnection(this.connectionString);
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = new SqlCommand("SELECT * FROM Reviews WHERE ReviewId = @ReviewId", connection);
+            using var command = new SqlCommand(ReviewQueries.GetReviewByIdQuery, connection);
             command.Parameters.AddWithValue("@ReviewId", reviewId);
 
             using var reader = command.ExecuteReader();
@@ -83,10 +81,10 @@
         {
             var reviews = new List<Review>();
 
-            using var connection = new SqlConnection(this.connectionString);
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = new SqlCommand("SELECT * FROM Reviews WHERE RatingId = @RatingId", connection);
+            using var command = new SqlCommand(ReviewQueries.GetReviewsByRatingIdQuery, connection);
             command.Parameters.AddWithValue("@RatingId", ratingId);
 
             using var reader = command.ExecuteReader();
@@ -108,10 +106,10 @@
 
         public Review AddOrUpdateReview(Review review)
         {
-            using var connection = new SqlConnection(this.connectionString);
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using (var checkCommand = new SqlCommand("SELECT COUNT(*) FROM Reviews WHERE ReviewId = @ReviewId", connection))
+            using (var checkCommand = new SqlCommand(ReviewQueries.ExistsReviewByIdQuery, connection))
             {
                 checkCommand.Parameters.AddWithValue("@ReviewId", review.ReviewId);
                 var exists = Convert.ToInt32(checkCommand.ExecuteScalar()) > 0;
@@ -119,9 +117,7 @@
                 if (!exists)
                 {
                     using var insertCommand = new SqlCommand(
-                        @"INSERT INTO Reviews (RatingId, UserId, Content, CreationDate, IsActive)
-                        OUTPUT INSERTED.ReviewId
-                        VALUES (@RatingId, @UserId, @Content, @CreationDate, @IsActive)",
+                        ReviewQueries.AddReviewQuery,
                         connection);
 
                     insertCommand.Parameters.AddWithValue("@RatingId", review.RatingId);
@@ -135,13 +131,7 @@
                 else
                 {
                     using var updateCommand = new SqlCommand(
-                        @"UPDATE Reviews
-                        SET RatingId = @RatingId,
-                            UserId = @UserId,
-                            Content = @Content,
-                            CreationDate = @CreationDate,
-                            IsActive = @IsActive
-                        WHERE ReviewId = @ReviewId",
+                        ReviewQueries.UpdateReviewQuery,
                         connection);
 
                     updateCommand.Parameters.AddWithValue("@ReviewId", review.ReviewId);
