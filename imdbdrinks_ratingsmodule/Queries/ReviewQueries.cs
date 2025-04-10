@@ -7,6 +7,7 @@
     using System.Threading.Tasks;
     using imdbdrinks_ratingsmodule.Domain;
     using Microsoft.Data.SqlClient;
+    using Microsoft.UI.Xaml.Controls.Primitives;
 
     public static class ReviewQueries
     {
@@ -17,8 +18,6 @@
         public const string GetReviewByIdQuery = "SELECT * FROM Reviews WHERE ReviewId = @ReviewId";
 
         public const string GetReviewsByRatingIdQuery = "SELECT * FROM Reviews WHERE RatingId = @RatingId";
-
-        public const string ExistsReviewByIdQuery = "SELECT COUNT(*) FROM Reviews WHERE ReviewId = @ReviewId";
 
         public const string AddReviewQuery =
                         @"INSERT INTO Reviews (RatingId, UserId, Content, CreationDate, IsActive)
@@ -32,6 +31,15 @@
                             Content = @Content,
                             CreationDate = @CreationDate,
                             IsActive = @IsActive
+                        WHERE ReviewId = @ReviewId";
+
+        public const string CheckIfIdExistsQuery =
+                        @"SELECT
+                            CASE
+                                WHEN COUNT(*) = 1 THEN 1
+                                ELSE 0
+                            END AS result
+                        FROM Reviews
                         WHERE ReviewId = @ReviewId";
     }
 }

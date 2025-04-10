@@ -34,11 +34,10 @@
             return updateCommand;
         }
 
-        public static SqlCommand CreateExistsReviewByIdCommand(SqlConnection connection, int reviewId)
+        public static SqlCommand CreateCheckIfReviewWithIdExistsCommand(SqlConnection connection, int reviewId)
         {
-            SqlCommand existsCommand = new (ReviewQueries.ExistsReviewByIdQuery, connection);
+            SqlCommand existsCommand = new(ReviewQueries.CheckIfIdExistsQuery, connection);
             existsCommand.Parameters.AddWithValue("@ReviewId", reviewId);
-
             return existsCommand;
         }
 

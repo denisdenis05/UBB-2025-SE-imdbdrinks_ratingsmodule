@@ -23,8 +23,8 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateDeleteReviewById(connection, reviewId);
-            command.ExecuteNonQuery();
+            using var deleteReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateDeleteReviewById(connection, reviewId);
+            deleteReviewByIdCommand.ExecuteNonQuery();
         }
 
         public IEnumerable<Review> GetAllReviews()
@@ -34,9 +34,9 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateGetAllReviewsCommand(connection);
+            using var getAllReviewsCommand = DatabaseReviewRepositoryHelper.CreateGetAllReviewsCommand(connection);
 
-            using var reader = command.ExecuteReader();
+            using var reader = getAllReviewsCommand.ExecuteReader();
 
             return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader);
         }
@@ -46,9 +46,9 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateGetReviewByIdCommand(connection, reviewId);
+            using var getReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewByIdCommand(connection, reviewId);
 
-            using var reader = command.ExecuteReader();
+            using var reader = getReviewByIdCommand.ExecuteReader();
 
             return DatabaseReviewRepositoryHelper.ExhaustSingleReviewReader(reader);
         }
@@ -60,9 +60,9 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateGetReviewsByRatingIdCommand(connection, ratingId);
+            using var getReviewsByRatingIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewsByRatingIdCommand(connection, ratingId);
 
-            using var reader = command.ExecuteReader();
+            using var reader = getReviewsByRatingIdCommand.ExecuteReader();
 
             return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader);
         }
@@ -72,11 +72,11 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateExistsReviewByIdCommand(connection, reviewId);
+            using var checkIfReviewWithIdExistsCommand = DatabaseReviewRepositoryHelper.CreateCheckIfReviewWithIdExistsCommand(connection, reviewId);
 
-            // Execute the command and check if any rows are returned
-            // if any rows are returned, it means the review exists
-            return (int)command.ExecuteScalar() > 0;
+            var doesReviewExist = Convert.ToBoolean(checkIfReviewWithIdExistsCommand.ExecuteScalar());
+
+            return doesReviewExist;
         }
 
         public int AddReview(Review review)
@@ -84,9 +84,9 @@
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
-            using var command = DatabaseReviewRepositoryHelper.CreateAddReviewCommand(connection, review);
+            using var addCommand = DatabaseReviewRepositoryHelper.CreateAddReviewCommand(connection, review);
 
-            return (int)command.ExecuteScalar();
+            return (int)addCommand.ExecuteScalar();
         }
 
         public Review UpdateReview(Review review)
