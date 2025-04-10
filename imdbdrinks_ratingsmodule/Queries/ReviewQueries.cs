@@ -1,10 +1,12 @@
-﻿namespace imdbdrinks_ratingsmodule.Repositories.Queries
+﻿namespace imdbdrinks_ratingsmodule.Queries
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using imdbdrinks_ratingsmodule.Domain;
+    using Microsoft.Data.SqlClient;
 
     public static class ReviewQueries
     {

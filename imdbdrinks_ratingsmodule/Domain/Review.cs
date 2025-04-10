@@ -4,6 +4,8 @@
 
     public class Review
     {
+        private const int MaxContentLength = 500;
+
         public int ReviewId { get; set; }
 
         public int RatingId { get; set; } // The rating this review belongs to
@@ -19,7 +21,7 @@
         // Validate that the review content is not empty and no longer than 500 characters.
         public bool IsValid()
         {
-            return !string.IsNullOrWhiteSpace(this.Content) && this.Content.Length <= 500;
+            return !string.IsNullOrWhiteSpace(this.Content) && this.Content.Length <= MaxContentLength;
         }
     }
 }

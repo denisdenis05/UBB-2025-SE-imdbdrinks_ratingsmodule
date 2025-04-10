@@ -1,6 +1,7 @@
 ﻿namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System;
+    using imdbdrinks_ratingsmodule.Constants.ErrorMessages;
     using Microsoft.Data.SqlClient;
     using Microsoft.Extensions.Configuration;
 
@@ -13,7 +14,7 @@
             ArgumentNullException.ThrowIfNull(configuration);
 
             this.connectionString = configuration["DbConnection"]
-                ?? throw new InvalidOperationException("DbConnection configuration is missing or null.");
+                ?? throw new InvalidOperationException(DatabaseConnectionErrorMessages.ConnectionStringNotFound);
         }
 
         public SqlConnection CreateConnection()
