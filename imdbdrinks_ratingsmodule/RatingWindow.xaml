@@ -16,7 +16,7 @@
             <TextBlock Text="Drink name" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,5,0,20"/>
 
             <!-- Dynamic Bottle Rating -->
-            <ItemsControl ItemsSource="{Binding Bottles}">
+            <ItemsControl ItemsSource="{Binding RatingBottles}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"/>
@@ -29,6 +29,14 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- Rating Feedback Text -->
+            <TextBlock Text="{Binding RatingFeedbackText}" 
+                     FontSize="16" 
+                     Foreground="#555555"
+                     HorizontalAlignment="Center" 
+                     Margin="0,15,0,15" 
+                     TextWrapping="Wrap"/>
 
             <!-- Rate Button -->
             <Button Content="Rate" Background="Black" Foreground="White" FontSize="18" Padding="10,5"
