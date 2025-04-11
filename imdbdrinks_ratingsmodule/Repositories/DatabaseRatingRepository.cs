@@ -7,18 +7,18 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     class DatabaseRatingRepository : IRatingRepository
     {
-        private readonly DatabaseConnection _databaseConnection;
+        private readonly DatabaseConnection databaseConnection;
 
         public DatabaseRatingRepository(DatabaseConnection databaseConnection)
         {
-            _databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
+            this.databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
         }
 
         public void Delete(long ratingId)
         {
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "DELETE FROM Ratings WHERE RatingId = @RatingId";
@@ -39,7 +39,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Ratings";
@@ -72,7 +72,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         {
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Ratings WHERE RatingId = @RatingId";
@@ -108,7 +108,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Ratings WHERE ProductId = @ProductId";
@@ -142,7 +142,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         {
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 // check if rating exists

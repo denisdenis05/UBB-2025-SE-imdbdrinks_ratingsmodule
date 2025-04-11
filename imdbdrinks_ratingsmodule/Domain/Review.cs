@@ -4,9 +4,9 @@ namespace imdbdrinks_ratingsmodule.Domain
 {
     public class Review
     {
-        public long ReviewId { get; set; }
-        public long RatingId { get; set; } // The rating this review belongs to
-        public long UserId { get; set; }
+        public int ReviewId { get; set; }
+        public int RatingId { get; set; } // The rating this review belongs to
+        public int UserId { get; set; }
         public string Content { get; set; }
         public DateTime CreationDate { get; set; }
         public bool IsActive { get; set; }

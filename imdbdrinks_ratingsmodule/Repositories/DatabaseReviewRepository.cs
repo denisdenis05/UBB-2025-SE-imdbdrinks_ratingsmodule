@@ -7,17 +7,18 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     class DatabaseReviewRepository : IReviewRepository
     {
-        private readonly DatabaseConnection _databaseConnection;
+        private readonly DatabaseConnection databaseConnection;
 
         public DatabaseReviewRepository(DatabaseConnection databaseConnection)
         {
-            _databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
+            this.databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
         }
 
         public void Delete(long reviewId)
         {
-            try {
-                using var connection = _databaseConnection.CreateConnection();
+            try
+            {
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "DELETE FROM Reviews WHERE ReviewId = @ReviewId";
@@ -38,7 +39,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Reviews";
@@ -49,9 +50,9 @@ namespace imdbdrinks_ratingsmodule.Repositories
                 while (reader.Read())
                 {
                     reviews.Add(new Review {
-                        ReviewId = reader.GetInt64(reader.GetOrdinal("ReviewId")),
-                        RatingId = reader.GetInt64(reader.GetOrdinal("RatingId")),
-                        UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                        ReviewId = reader.GetInt32(reader.GetOrdinal("ReviewId")),
+                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                         Content = reader.GetString(reader.GetOrdinal("Content")),
                         CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
                         IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
@@ -70,7 +71,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         {
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Reviews WHERE ReviewId = @ReviewId";
@@ -83,9 +84,9 @@ namespace imdbdrinks_ratingsmodule.Repositories
                 {
                     return new Review
                     {
-                        ReviewId = reader.GetInt64(reader.GetOrdinal("ReviewId")),
-                        RatingId = reader.GetInt64(reader.GetOrdinal("RatingId")),
-                        UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                        ReviewId = reader.GetInt32(reader.GetOrdinal("ReviewId")),
+                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                         Content = reader.GetString(reader.GetOrdinal("Content")),
                         CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
                         IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
@@ -105,7 +106,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             var reviews = new List<Review>();
 
             try {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 command.CommandText = "SELECT * FROM Reviews WHERE RatingId = @RatingId";
@@ -118,9 +119,9 @@ namespace imdbdrinks_ratingsmodule.Repositories
                 {
                     reviews.Add(new Review
                     {
-                        ReviewId = reader.GetInt64(reader.GetOrdinal("ReviewId")),
-                        RatingId = reader.GetInt64(reader.GetOrdinal("RatingId")),
-                        UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
+                        ReviewId = reader.GetInt32(reader.GetOrdinal("ReviewId")),
+                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
+                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
                         Content = reader.GetString(reader.GetOrdinal("Content")),
                         CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
                         IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
@@ -139,7 +140,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         {
             try
             {
-                using var connection = _databaseConnection.CreateConnection();
+                using var connection = this.databaseConnection.CreateConnection();
                 using var command = connection.CreateCommand();
 
                 // check if review exists
