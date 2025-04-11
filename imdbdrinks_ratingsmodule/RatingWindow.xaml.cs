@@ -4,8 +4,6 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 
 namespace imdbdrinks_ratingsmodule
 {
@@ -13,33 +11,8 @@ namespace imdbdrinks_ratingsmodule
     /// Window that allows users to provide a rating for a drink product.
     /// Displays a set of bottle images that can be clicked to select a rating score.
     /// </summary>
-    public sealed partial class RatingWindow : Window, INotifyPropertyChanged
+    public sealed partial class RatingWindow : Window
     {
-        /// <summary>
-        /// Collection of bottle images representing the rating scale.
-        /// </summary>
-        public ObservableCollection<BottleIcon> RatingBottles { get; set; }
-        
-        /// <summary>
-        /// The user's selected rating score (1-5).
-        /// </summary>
-        public int UserRatingScore { get; set; }
-
-        /// <summary>
-        /// Text to display the current rating selection.
-        /// </summary>
-        public string RatingFeedbackText { get; set; }
-
-        // Resource paths for bottle images
-        private readonly string _emptyBottleImagePath = "ms-appx:///Assets/Bottle.png";
-        private readonly string _filledBottleImagePath = "ms-appx:///Assets/FullBottle.png";
-
-        /// <summary>
-        /// Event that is triggered when a property changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-        
-        // View model for rating operations
         private readonly RatingViewModel _ratingViewModel;
 
         /// <summary>
@@ -48,27 +21,9 @@ namespace imdbdrinks_ratingsmodule
         /// <param name="viewModel">The rating view model to use for data operations.</param>
         public RatingWindow(RatingViewModel viewModel)
         {
-            this.InitializeComponent();
-            RatingBottles = new ObservableCollection<BottleIcon>();
-            RatingFeedbackText = "Select a rating from 1 to 5";
-
-            // Initialize 5 bottles in an empty (unrated) state
-            for (int i = 0; i < 5; i++)
-            {
-                RatingBottles.Add(new BottleIcon { ImageSource = _emptyBottleImagePath });
-            }
-
-            rootGrid.DataContext = this;
+            InitializeComponent();
             _ratingViewModel = viewModel;
-        }
-
-        /// <summary>
-        /// Notifies listeners that a property value has changed.
-        /// </summary>
-        /// <param name="propertyName">Name of the property that changed.</param>
-        private void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            rootGrid.DataContext = _ratingViewModel;
         }
 
         /// <summary>
@@ -79,25 +34,10 @@ namespace imdbdrinks_ratingsmodule
         /// <param name="e">Event arguments containing information about the tap.</param>
         private void Bottle_Click(object sender, TappedRoutedEventArgs e)
         {
-            if (sender is Image clickedImage && clickedImage.DataContext is BottleIcon clickedBottle)
+            if (sender is Image clickedImage && clickedImage.DataContext is BottleViewModel clickedBottle)
             {
-                int selectedIndex = RatingBottles.IndexOf(clickedBottle);
-
-                // Update all bottles based on the selected rating
-                for (int i = 0; i < RatingBottles.Count; i++)
-                {
-                    // Fill bottles up to and including the clicked one, empty the rest
-                    RatingBottles[i].ImageSource = i <= selectedIndex 
-                        ? _filledBottleImagePath 
-                        : _emptyBottleImagePath;
-                }
-                
-                // Store the rating value (1-5)
-                UserRatingScore = selectedIndex + 1;
-                
-                // Update the feedback text
-                RatingFeedbackText = $"You selected {UserRatingScore} out of 5 bottles";
-                OnPropertyChanged(nameof(RatingFeedbackText));
+                int selectedIndex = _ratingViewModel.RatingBottles.IndexOf(clickedBottle);
+                _ratingViewModel.UpdateBottleRating(selectedIndex);
             }
         }
 
@@ -110,18 +50,9 @@ namespace imdbdrinks_ratingsmodule
         private async void RateButton_Click(object sender, RoutedEventArgs e)
         {
             // Validate that a rating was selected
-            if (UserRatingScore == 0)
+            if (_ratingViewModel.UserRatingScore == 0)
             {
-                // Display a message dialog to inform the user they need to select a rating
-                ContentDialog noRatingDialog = new ContentDialog
-                {
-                    Title = "No Rating Selected",
-                    Content = "Please select a rating by clicking on one of the bottles before submitting.",
-                    CloseButtonText = "OK",
-                    XamlRoot = this.Content.XamlRoot
-                };
-                
-                await noRatingDialog.ShowAsync();
+                // TODO: Message for user to select a rating
                 return;
             }
 
@@ -129,53 +60,15 @@ namespace imdbdrinks_ratingsmodule
             Rating newRating = new Rating
             {
                 ProductId = 100, // TODO: Replace with actual product ID from context
-                RatingValue = UserRatingScore,
+                RatingValue = _ratingViewModel.UserRatingScore,
                 UserId = _ratingViewModel.Ratings.Count + 1 // TODO: Replace with actual user ID
             };
 
             // Save the rating via the view model
             _ratingViewModel.AddRating(newRating);
-            
-            // Show a confirmation message before closing
-            ContentDialog confirmationDialog = new ContentDialog
-            {
-                Title = "Rating Submitted",
-                Content = $"Thank you! You rated this drink {UserRatingScore} out of 5 bottles.",
-                CloseButtonText = "OK",
-                XamlRoot = this.Content.XamlRoot
-            };
-            
-            await confirmationDialog.ShowAsync();
 
             // Close the rating window
             this.Close();
         }
-    }
-
-    /// <summary>
-    /// Represents a bottle icon in the rating system.
-    /// Implements property change notification to support UI updates.
-    /// </summary>
-    public class BottleIcon : INotifyPropertyChanged
-    {
-        private string _imageSource;
-        
-        /// <summary>
-        /// Gets or sets the image source path for the bottle icon.
-        /// </summary>
-        public string ImageSource
-        {
-            get => _imageSource;
-            set
-            {
-                _imageSource = value;
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
-            }
-        }
-
-        /// <summary>
-        /// Event that is triggered when a property changes.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
