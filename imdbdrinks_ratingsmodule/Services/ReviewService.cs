@@ -15,8 +15,8 @@ namespace imdbdrinks_ratingsmodule.Services
             _reviewRepository = reviewRepository;
         }
 
-        public IEnumerable<Review> GetReviewsByRating(long ratingId) =>
-            _reviewRepository.FindByRatingId(ratingId);
+        public IEnumerable<Review> GetReviewsByRating(int ratingId) =>
+            _reviewRepository.GetReviewsByRatingId(ratingId);
 
         public Review CreateReview(Review review)
         {
@@ -25,10 +25,10 @@ namespace imdbdrinks_ratingsmodule.Services
 
             review.CreationDate = DateTime.Now;
             review.IsActive = true;
-            return _reviewRepository.Save(review);
+            return _reviewRepository.AddOrUpdateReview(review);
         }
 
-        public void DeleteReview(long reviewId) =>
-            _reviewRepository.Delete(reviewId);
+        public void DeleteReview(int reviewId) =>
+            _reviewRepository.DeleteReviewById(reviewId);
     }
 }

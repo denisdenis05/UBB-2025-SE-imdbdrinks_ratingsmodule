@@ -1,17 +1,27 @@
-﻿using System;
-
-namespace imdbdrinks_ratingsmodule.Domain
+﻿namespace imdbdrinks_ratingsmodule.Domain
 {
+    using System;
+
     public class Review
     {
-        public long ReviewId { get; set; }
-        public long RatingId { get; set; } // The rating this review belongs to
-        public long UserId { get; set; }
-        public string Content { get; set; }
+        private const int MaxContentLength = 500;
+
+        public int ReviewId { get; set; }
+
+        public int RatingId { get; set; } // The rating this review belongs to
+
+        public int UserId { get; set; }
+
+        public string Content { get; set; } = string.Empty;
+
         public DateTime CreationDate { get; set; }
+
         public bool IsActive { get; set; }
 
         // Validate that the review content is not empty and no longer than 500 characters.
-        public bool IsValid() => !string.IsNullOrWhiteSpace(Content) && Content.Length <= 500;
+        public bool IsValid()
+        {
+            return !string.IsNullOrWhiteSpace(this.Content) && this.Content.Length <= MaxContentLength;
+        }
     }
 }

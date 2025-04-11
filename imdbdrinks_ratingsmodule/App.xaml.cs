@@ -40,9 +40,13 @@ namespace imdbdrinks_ratingsmodule
 
             // Add configuration to DI container
             services.AddSingleton<IConfiguration>(configuration);
+            services.AddSingleton<DatabaseConnection>();
 
             // Add connection string as a singleton
-            services.AddSingleton(sp => configuration.GetConnectionString("DefaultConnection"));
+            // INFO: this is not needed anymore, since we are using the DatabaseConnection class
+             services.AddSingleton(sp => configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddSingleton<DatabaseConnection>();
 
             // Add repositories, services, and view models to DI container
             services.AddSingleton<IReviewRepository, DatabaseReviewRepository>();
