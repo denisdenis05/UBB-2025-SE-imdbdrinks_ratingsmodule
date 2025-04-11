@@ -61,7 +61,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
             Ratings = new ObservableCollection<Rating>();
         }
 
-        public void LoadRatingsForProduct(long productId)
+        public void LoadRatingsForProduct(int productId)
         {
             var ratings = _ratingService.GetRatingsByProduct(productId);
             Ratings.Clear();

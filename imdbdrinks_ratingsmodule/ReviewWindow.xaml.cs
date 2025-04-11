@@ -55,7 +55,7 @@ namespace imdbdrinks_ratingsmodule
             {
                 // Determine the rating ID.
                 // If no rating is selected, use a default value (e.g., 0).
-                long ratingId = ViewModel.SelectedRating != null ? ViewModel.SelectedRating.RatingId : 0;
+                int ratingId = ViewModel.SelectedRating != null ? ViewModel.SelectedRating.RatingId : 0;
 
                 // Create a new review.
                 var newReview = new Review
