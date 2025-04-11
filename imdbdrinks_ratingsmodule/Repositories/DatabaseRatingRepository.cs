@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
-    class DatabaseRatingRepository : IRatingRepository
+    public class DatabaseRatingRepository : IRatingRepository
     {
         private readonly DatabaseConnection databaseConnection;
 
@@ -54,7 +54,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
                         RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
                         ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
                         UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                        RatingValue = reader.GetInt32(reader.GetOrdinal("RatingValue")),
+                        RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
                         RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
                         IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
                     });
