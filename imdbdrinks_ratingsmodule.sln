@@ -5,6 +5,8 @@ VisualStudioVersion = 17.13.35828.75 d17.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "imdbdrinks_ratingsmodule", "imdbdrinks_ratingsmodule\imdbdrinks_ratingsmodule.csproj", "{6317C720-9260-4B01-AB75-D3B1998B7DCE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "imdbdrinks_ratingsmodule.Test", "imdbdrinks_ratingsmodule.Test\imdbdrinks_ratingsmodule.Test.csproj", "{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM64 = Debug|ARM64
@@ -33,6 +35,18 @@ Global
 		{6317C720-9260-4B01-AB75-D3B1998B7DCE}.Release|x86.ActiveCfg = Release|x86
 		{6317C720-9260-4B01-AB75-D3B1998B7DCE}.Release|x86.Build.0 = Release|x86
 		{6317C720-9260-4B01-AB75-D3B1998B7DCE}.Release|x86.Deploy.0 = Release|x86
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|x64.Build.0 = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Debug|x86.Build.0 = Debug|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|ARM64.Build.0 = Release|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|x64.ActiveCfg = Release|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|x64.Build.0 = Release|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|x86.ActiveCfg = Release|Any CPU
+		{D85B4F6F-7A50-4AF6-B065-920ADEDF61AD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
