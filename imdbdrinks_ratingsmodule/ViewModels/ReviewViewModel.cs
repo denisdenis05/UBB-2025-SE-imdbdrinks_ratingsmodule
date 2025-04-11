@@ -30,7 +30,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
             Reviews = new ObservableCollection<Review>();
         }
 
-        public void LoadReviewsForRating(long ratingId)
+        public void LoadReviewsForRating(int ratingId)
         {
             var reviews = _reviewService.GetReviewsByRating(ratingId);
             Reviews.Clear();
