@@ -1,34 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using imdbdrinks_ratingsmodule.Domain;
-using imdbdrinks_ratingsmodule.Repositories;
-
-namespace imdbdrinks_ratingsmodule.Services
+﻿namespace imdbdrinks_ratingsmodule.Services
 {
-    public class ReviewService
-    {
-        private readonly IReviewRepository _reviewRepository;
+    using System;
+    using System.Collections.Generic;
+    using imdbdrinks_ratingsmodule.Constants.ErrorMessages;
+    using imdbdrinks_ratingsmodule.Domain;
+    using imdbdrinks_ratingsmodule.Repositories;
 
-        public ReviewService(IReviewRepository reviewRepository)
+    public class ReviewService(IReviewRepository reviewRepository)
+    {
+        private readonly IReviewRepository reviewRepository = reviewRepository;
+
+        public IEnumerable<Review> GetReviewsByRating(int ratingId)
         {
-            _reviewRepository = reviewRepository;
+            return this.reviewRepository.GetReviewsByRatingId(ratingId);
         }
 
-        public IEnumerable<Review> GetReviewsByRating(int ratingId) =>
-            _reviewRepository.GetReviewsByRatingId(ratingId);
-
-        public Review CreateReview(Review review)
+        public Review AddReview(Review review)
         {
             if (!review.IsValid())
-                throw new ArgumentException("Invalid review content.");
+            {
+                throw new ArgumentException(ReviewServiceErrorMessages.InvalidReview);
+            }
 
-            review.CreationDate = DateTime.Now;
-            review.IsActive = true;
-            return _reviewRepository.AddOrUpdateReview(review);
+            review.Activate();
+            return this.reviewRepository.AddOrUpdateReview(review);
         }
 
-        public void DeleteReview(int reviewId) =>
-            _reviewRepository.DeleteReviewById(reviewId);
+        public void DeleteReviewById(int reviewId)
+        {
+            this.reviewRepository.DeleteReviewById(reviewId);
+        }
     }
 }

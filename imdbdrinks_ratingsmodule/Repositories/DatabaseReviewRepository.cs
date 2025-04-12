@@ -2,21 +2,11 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
     using imdbdrinks_ratingsmodule.Domain;
-    using imdbdrinks_ratingsmodule.Queries;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Configuration;
-    using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
-    public class DatabaseReviewRepository : IReviewRepository
+    public class DatabaseReviewRepository(DatabaseConnection databaseConnection) : IReviewRepository
     {
-        private readonly DatabaseConnection databaseConnection;
-
-        public DatabaseReviewRepository(DatabaseConnection databaseConnection)
-        {
-            this.databaseConnection = databaseConnection;
-        }
+        private readonly DatabaseConnection databaseConnection = databaseConnection;
 
         public void DeleteReviewById(int reviewId)
         {
@@ -29,8 +19,6 @@
 
         public IEnumerable<Review> GetAllReviews()
         {
-            var reviews = new List<Review>();
-
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
