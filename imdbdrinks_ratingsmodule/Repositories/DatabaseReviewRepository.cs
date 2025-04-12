@@ -1,173 +1,115 @@
-﻿using imdbdrinks_ratingsmodule.Domain;
-using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.SqlClient;
-
-namespace imdbdrinks_ratingsmodule.Repositories
+﻿namespace imdbdrinks_ratingsmodule.Repositories
 {
-    class DatabaseReviewRepository : IReviewRepository
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using imdbdrinks_ratingsmodule.Domain;
+    using imdbdrinks_ratingsmodule.Queries;
+    using Microsoft.Data.SqlClient;
+    using Microsoft.Extensions.Configuration;
+    using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+
+    public class DatabaseReviewRepository : IReviewRepository
     {
-        private readonly string _connectionString;
+        private readonly DatabaseConnection databaseConnection;
 
-        public DatabaseReviewRepository(IConfiguration configuration)
+        public DatabaseReviewRepository(DatabaseConnection databaseConnection)
         {
-            _connectionString = configuration["DbConnection"];
+            this.databaseConnection = databaseConnection;
         }
 
-        public void Delete(long reviewId)
+        public void DeleteReviewById(int reviewId)
         {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                using (var command = new SqlCommand("DELETE FROM Reviews WHERE ReviewId = @ReviewId", connection))
-                {
-                    command.Parameters.AddWithValue("@ReviewId", reviewId);
-                    command.ExecuteNonQuery();
-                }
-            }
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var deleteReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateDeleteReviewById(connection, reviewId);
+            deleteReviewByIdCommand.ExecuteNonQuery();
         }
 
-        public IEnumerable<Review> FindAll()
+        public IEnumerable<Review> GetAllReviews()
         {
             var reviews = new List<Review>();
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                using (var command = new SqlCommand("SELECT * FROM Reviews", connection))
-                using (var reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        reviews.Add(new Review
-                        {
-                            ReviewId = reader.GetInt64(reader.GetOrdinal("ReviewId")),
-                            RatingId = reader.GetInt64(reader.GetOrdinal("RatingId")),
-                            UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
-                            Content = reader.GetString(reader.GetOrdinal("Content")),
-                            CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
-                            IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive"))
-                        });
-                    }
-                }
-            }
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-            return reviews;
+            using var getAllReviewsCommand = DatabaseReviewRepositoryHelper.CreateGetAllReviewsCommand(connection);
+
+            using var reader = getAllReviewsCommand.ExecuteReader();
+
+            return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader);
         }
 
-        public Review FindById(long reviewId)
+        public Review GetReviewById(int reviewId)
         {
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                using (var command = new SqlCommand("SELECT * FROM Reviews WHERE ReviewId = @ReviewId", connection))
-                {
-                    command.Parameters.AddWithValue("@ReviewId", reviewId);
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new Review
-                            {
-                                ReviewId = reader.GetInt64(reader.GetOrdinal("ReviewId")),
-                                RatingId = reader.GetInt64(reader.GetOrdinal("RatingId")),
-                                UserId = reader.GetInt64(reader.GetOrdinal("UserId")),
-                                Content = reader.GetString(reader.GetOrdinal("Content")),
-                                CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
-                                IsActive = reader.GetBoolean(reader.GetOrdinal("IsActive"))
-                            };
-                        }
-                    }
-                }
-            }
+            using var getReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewByIdCommand(connection, reviewId);
 
-            return null;
+            using var reader = getReviewByIdCommand.ExecuteReader();
+
+            return DatabaseReviewRepositoryHelper.ExhaustSingleReviewReader(reader);
         }
 
-        public IEnumerable<Review> FindByRatingId(long ratingId)
+        public IEnumerable<Review> GetReviewsByRatingId(int ratingId)
         {
             var reviews = new List<Review>();
 
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                connection.Open();
-                using (var command = new SqlCommand("SELECT * FROM Reviews WHERE RatingId = @RatingId", connection))
-                {
-                    command.Parameters.AddWithValue("@RatingId", ratingId);
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-                    using (var reader = command.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            reviews.Add(new Review
-                            {
-                                ReviewId = reader.GetInt32(reader.GetOrdinal("ReviewId")),
-                                RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                                Content = reader.GetString(reader.GetOrdinal("Content")),
-                                CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
-                                IsActive = Convert.ToBoolean(reader["IsActive"])
-                            });
-                        }
-                    }
-                }
-            }
+            using var getReviewsByRatingIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewsByRatingIdCommand(connection, ratingId);
 
-            return reviews;
+            using var reader = getReviewsByRatingIdCommand.ExecuteReader();
+
+            return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader);
         }
 
-        public Review Save(Review review)
+        public bool CheckIfReviewWithIdExists(int reviewId)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var checkIfReviewWithIdExistsCommand = DatabaseReviewRepositoryHelper.CreateCheckIfReviewWithIdExistsCommand(connection, reviewId);
+
+            var doesReviewExist = Convert.ToBoolean(checkIfReviewWithIdExistsCommand.ExecuteScalar());
+
+            return doesReviewExist;
+        }
+
+        public int AddReview(Review review)
+        {
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var addCommand = DatabaseReviewRepositoryHelper.CreateAddReviewCommand(connection, review);
+
+            return (int)addCommand.ExecuteScalar();
+        }
+
+        public Review UpdateReview(Review review)
+        {
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var updateCommand = DatabaseReviewRepositoryHelper.CreateUpdateReviewCommand(connection, review);
+            updateCommand.ExecuteNonQuery();
+
+            return review;
+        }
+
+        public Review AddOrUpdateReview(Review review)
+        {
+            var reviewExists = this.CheckIfReviewWithIdExists(review.ReviewId);
+            if (reviewExists)
             {
-                connection.Open();
-                using (var command = new SqlCommand())
-                {
-                    command.Connection = connection;
-
-                    command.CommandText = "SELECT COUNT(*) FROM Reviews WHERE ReviewId = @ReviewId";
-                    command.Parameters.AddWithValue("@ReviewId", review.ReviewId);
-                    var exists = Convert.ToInt32(command.ExecuteScalar()) > 0;
-
-                    command.Parameters.Clear();
-
-                    if (!exists)
-                    {
-                        command.CommandText = @"
-                            INSERT INTO Reviews (RatingId, UserId, Content, CreationDate, IsActive)
-                            OUTPUT INSERTED.ReviewId
-                            VALUES (@RatingId, @UserId, @Content, @CreationDate, @IsActive)";
-                        command.Parameters.AddWithValue("@RatingId", review.RatingId);
-                        command.Parameters.AddWithValue("@UserId", review.UserId);
-                        command.Parameters.AddWithValue("@Content", review.Content);
-                        command.Parameters.AddWithValue("@CreationDate", review.CreationDate);
-                        command.Parameters.AddWithValue("@IsActive", review.IsActive);
-
-                        review.ReviewId = (int)command.ExecuteScalar();
-                    }
-                    else
-                    {
-                        command.CommandText = @"
-                            UPDATE Reviews
-                            SET RatingId = @RatingId,
-                                UserId = @UserId,
-                                Content = @Content,
-                                CreationDate = @CreationDate,
-                                IsActive = @IsActive
-                            WHERE ReviewId = @ReviewId";
-                        command.Parameters.AddWithValue("@ReviewId", review.ReviewId);
-                        command.Parameters.AddWithValue("@RatingId", review.RatingId);
-                        command.Parameters.AddWithValue("@UserId", review.UserId);
-                        command.Parameters.AddWithValue("@Content", review.Content);
-                        command.Parameters.AddWithValue("@CreationDate", review.CreationDate);
-                        command.Parameters.AddWithValue("@IsActive", review.IsActive);
-
-                        command.ExecuteNonQuery();
-                    }
-                }
+                this.UpdateReview(review);
+            }
+            else
+            {
+                review.ReviewId = this.AddReview(review);
             }
 
             return review;
