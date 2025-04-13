@@ -138,6 +138,16 @@ class DatabaseRatingRepository : IRatingRepository
         }
     }
 
+    public Rating Add(Rating rating)
+    {
+        return this.Save(rating);
+    }
+
+    public Rating Update(Rating rating)
+    {
+        return this.Save(rating);
+    }
+
     public Rating Save(Rating rating)
     {
         try

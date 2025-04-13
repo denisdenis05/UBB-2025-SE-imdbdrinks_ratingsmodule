@@ -9,6 +9,10 @@ namespace imdbdrinks_ratingsmodule.Repositories
         IEnumerable<Rating> FindAll();
         IEnumerable<Rating> FindByProductId(long productId);
         Rating Save(Rating rating);
+
+        Rating Add(Rating rating);
+
+        Rating Update(Rating rating);
         void Delete(long ratingId);
     }
 }

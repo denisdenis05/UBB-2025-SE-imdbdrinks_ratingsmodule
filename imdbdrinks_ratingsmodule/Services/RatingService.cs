@@ -18,6 +18,7 @@ public class RatingService
 
     public IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.FindByProductId(productId);
 
+    // work in prograss
     public Rating CreateRating(Rating rating)
     {
         if (!rating.IsValid())
@@ -27,7 +28,19 @@ public class RatingService
 
         rating.RatingDate = System.DateTime.Now;
         rating.IsActive = true;
-        return this.ratingRepository.Save(rating);
+
+        return this.ratingRepository.Add(rating);
+    }
+
+    // work in progress
+    public Rating UpdateRating(Rating rating)
+    {
+        if (!rating.IsValid())
+        {
+            throw new System.ArgumentException("Invalid rating value.");
+        }
+
+        return this.ratingRepository.Update(rating);
     }
 
     public void DeleteRating(int ratingId) => this.ratingRepository.Delete(ratingId);
@@ -35,6 +48,7 @@ public class RatingService
     public double GetAverageRating(int productId)
     {
         var ratings = this.ratingRepository.FindByProductId(productId).Where(r => r.IsActive);
+
         if (!ratings.Any())
         {
             return 0;
