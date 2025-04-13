@@ -1,112 +1,89 @@
+namespace imdbdrinks_ratingsmodule;
+
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using imdbdrinks_ratingsmodule.Assets;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 
-namespace imdbdrinks_ratingsmodule
+public sealed partial class RatingWindow : Window, INotifyPropertyChanged
 {
-    public sealed partial class RatingWindow : Window, INotifyPropertyChanged
+    public int RatingScore { get; set; }
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public ObservableCollection<Bottle> Bottles { get; set; }
+
+    private readonly RatingViewModel ratingViewModel;
+
+    private const int MinimumRatingScore = 1;
+    private const int MaximumRatingScore = 5;
+    private const int BottleRatingToIndexOffset = 1;
+    private const int PlaceholderItemId = 100;
+
+
+    public RatingWindow(RatingViewModel viewModel)
     {
-        public ObservableCollection<Bottle> Bottles { get; set; }
-        public int ratingScore { get; set; }
+        this.InitializeComponent();
 
-        private string emptyBottlePath = "ms-appx:///Assets/Bottle.png";
-        private string filledBottlePath = "ms-appx:///Assets/FullBottle.png";
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private RatingViewModel _ratingViewModel;
-
-        public RatingWindow(RatingViewModel viewModel)
+        this.Bottles = new ObservableCollection<Bottle>();
+        foreach (var currentRating in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
         {
-            this.InitializeComponent();
-            Bottles = new ObservableCollection<Bottle>();
-
-            // Initialize 5 bottles in an empty state
-            for (int i = 0; i < 5; i++)
-            {
-                Bottles.Add(new Bottle { ImageSource = emptyBottlePath });
-            }
-
-            rootGrid.DataContext = this;
-            _ratingViewModel = viewModel;
+            var bottleToAdd = new Bottle { ImageSource = AssetConstants.EmptyBottlePath };
+            this.Bottles.Add(bottleToAdd);
         }
 
-        private void Bottle_Click(object sender, TappedRoutedEventArgs e)
-        {
-            if (sender is Image img && img.DataContext is Bottle bottle)
-            {
-                int index = Bottles.IndexOf(bottle);
+        this.rootGrid.DataContext = this;
+        this.ratingViewModel = viewModel;
+    }
 
-                for (int i = 0; i < Bottles.Count; i++)
-                {
-                    Bottles[i].ImageSource = i <= index ? filledBottlePath : emptyBottlePath;
-                }
-                ratingScore = index + 1;
-            }
+    private void Bottle_Click(object sender, TappedRoutedEventArgs e)
+    {
+        if (sender is not Image clickedImage)
+            return;
+
+        if (clickedImage.DataContext is not Bottle clickedBottle)
+            return;
+
+        int clickedBottleNumber = Bottles.IndexOf(clickedBottle);
+
+        foreach (var currentRatingBottle in Enumerable.Range(MinimumRatingScore, clickedBottleNumber))
+        {
+            var bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
+
+            if (bottleIndex <= clickedBottleNumber)
+                Bottles[bottleIndex].ImageSource = AssetConstants.FilledBottlePath;
+            else
+                Bottles[bottleIndex].ImageSource = AssetConstants.EmptyBottlePath;
         }
 
-        //private void RateButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // If no bottle was clicked, ratingScore will be 0. Exit the method to prevent an error.
-        //    if (ratingScore == 0)
-        //    {
-        //        // Optionally, show a message to the user here.
-        //        return;
-        //    }
+        RatingScore = clickedBottleNumber + BottleRatingToIndexOffset;
+    }
 
-        //    Rating rating = new Rating();
-        //    rating.ProductId = 100; // mock value, should be replaced with actual product id
-        //    rating.RatingValue = ratingScore;
-        //    rating.UserId = _ratingViewModel.Ratings.Count + 1; // mock value, should be replaced with actual user id
+    private void RateButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (RatingScore == MinimumRatingScore)
+            return;
 
-        //    _ratingViewModel.AddRating(rating);
-        //    this.Close();
-        //}
+        ratingViewModel.AddRating(PlaceholderItemId, RatingScore);
 
-        private void RateButton_Click(object sender, RoutedEventArgs e)
-        {
-            // If no bottle was clicked, ratingScore will be 0. Exit the method to prevent an error.
-            if (ratingScore == 0)
-            {
-                // Optionally, show a message to the user here.
-                return;
-            }
-
-            Rating rating = new Rating
-            {
-                ProductId = 100, // mock value, should be replaced with actual product id
-                RatingValue = ratingScore,
-                UserId = _ratingViewModel.Ratings.Count + 1 // mock value, should be replaced with actual user id
-            };
-
-            _ratingViewModel.AddRating(rating);
-
-            // Remove the line that resets the selected rating:
-            // if (_ratingViewModel.Ratings != null && _ratingViewModel.Ratings.Count > 0)
-            // {
-            //     _ratingViewModel.SelectedRating = _ratingViewModel.Ratings[0];
-            // }
-
-            this.Close();
-        }
-
-
-
+        this.Close();
     }
 
     public class Bottle : INotifyPropertyChanged
     {
-        private string _imageSource;
+        private string bottleImageSource;
+
         public string ImageSource
         {
-            get => _imageSource;
+            get => bottleImageSource;
             set
             {
-                _imageSource = value;
+                bottleImageSource = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
             }
         }

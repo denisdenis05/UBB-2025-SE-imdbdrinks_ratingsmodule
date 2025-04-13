@@ -80,6 +80,27 @@ namespace imdbdrinks_ratingsmodule.ViewModels
             LoadRatingsForProduct(rating.ProductId);
         }
 
+        public void AddRating(int productId, int ratingValue)
+        {
+            Rating rating = new Rating
+            {
+                ProductId = productId,
+                RatingValue = ratingValue,
+                UserId = GetUserId()
+            };
+
+            _ratingService.CreateRating(rating);
+
+            LoadRatingsForProduct(rating.ProductId);
+        }
+
+        private int GetUserId()
+        {
+            const int ratingsNumberToUserOffset = 1;
+
+            return Ratings.Count + ratingsNumberToUserOffset;
+        }
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

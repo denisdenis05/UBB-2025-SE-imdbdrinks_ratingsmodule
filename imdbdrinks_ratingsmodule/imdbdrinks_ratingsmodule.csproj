@@ -13,6 +13,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\AssetConstants.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="RatingWindow.xaml" />
     <None Remove="ReviewWindow.xaml" />
   </ItemGroup>
