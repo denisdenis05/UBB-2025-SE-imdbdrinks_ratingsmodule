@@ -1,4 +1,6 @@
-﻿using System;
+﻿namespace imdbdrinks_ratingsmodule.ViewModels;
+
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -6,103 +8,89 @@ using System.Runtime.CompilerServices;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
 
-namespace imdbdrinks_ratingsmodule.ViewModels
+public class RatingViewModel : ViewModelBase
 {
-    public class RatingViewModel : INotifyPropertyChanged
+
+    private readonly RatingService ratingService;
+    private ObservableCollection<Rating> ratings;
+    private Rating selectedRating;
+    private double averageRating;
+
+    public ObservableCollection<Rating> Ratings
     {
-        private readonly RatingService _ratingService;
-        private ObservableCollection<Rating> _ratings;
-
-        public ObservableCollection<Rating> Ratings
+        get => ratings;
+        set
         {
-            get => _ratings;
-            set
+            if (ratings != value)
             {
-                if (_ratings != value)
-                {
-                    _ratings = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref ratings, value);
             }
         }
+    }
 
-        private Rating _selectedRating;
-        public Rating SelectedRating
+    public Rating SelectedRating
+    {
+        get => selectedRating;
+        set
         {
-            get => _selectedRating;
-            set
+            if (selectedRating != value)
             {
-                if (_selectedRating != value)
-                {
-                    _selectedRating = value;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref selectedRating, value);
             }
         }
+    }
 
-        private double _averageRating;
-        public double AverageRating
+    public double AverageRating
+    {
+        get => averageRating;
+        set
         {
-            get => _averageRating;
-            set
+            double roundedValue = Math.Round(value, 2);
+            if (averageRating != roundedValue)
             {
-                double roundedValue = Math.Round(value, 2);
-                if (_averageRating != roundedValue)
-                {
-                    _averageRating = roundedValue;
-                    OnPropertyChanged();
-                }
+                SetProperty(ref averageRating, value);
             }
         }
+    }
 
-        public RatingViewModel(RatingService ratingService)
+    public RatingViewModel(RatingService ratingService)
+    {
+        this.ratingService = ratingService;
+        Ratings = new ObservableCollection<Rating>();
+    }
+
+    public void LoadRatingsForProduct(long productId)
+    {
+        var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
+        var ratingsOrderedByNewest = ratingsForProduct.Reverse();
+
+        Ratings.Clear();
+        foreach (var rating in ratingsOrderedByNewest)
         {
-            _ratingService = ratingService;
-            Ratings = new ObservableCollection<Rating>();
+            Ratings.Add(rating);
         }
 
-        public void LoadRatingsForProduct(long productId)
+        AverageRating = ratingService.GetAverageRating(productId);
+    }
+
+    public void AddRating(int productId, int ratingValue)
+    {
+        Rating rating = new Rating
         {
-            var ratings = _ratingService.GetRatingsByProduct(productId);
-            Ratings.Clear();
-            // Reverse the order so that the newest rating appears first
-            foreach (var rating in ratings.Reverse())
-            {
-                Ratings.Add(rating);
-            }
-            AverageRating = _ratingService.GetAverageRating(productId);
-        }
+            ProductId = productId,
+            RatingValue = ratingValue,
+            UserId = GetUserId()
+        };
 
-        public void AddRating(Rating rating)
-        {
-            _ratingService.CreateRating(rating);
-            // Reload the ratings so that the new one appears at the top
-            LoadRatingsForProduct(rating.ProductId);
-        }
+        ratingService.CreateRating(rating);
 
-        public void AddRating(int productId, int ratingValue)
-        {
-            Rating rating = new Rating
-            {
-                ProductId = productId,
-                RatingValue = ratingValue,
-                UserId = GetUserId()
-            };
+        LoadRatingsForProduct(rating.ProductId);
+    }
 
-            _ratingService.CreateRating(rating);
+    private int GetUserId()
+    {
+        const int ratingsNumberToUserOffset = 1;
 
-            LoadRatingsForProduct(rating.ProductId);
-        }
-
-        private int GetUserId()
-        {
-            const int ratingsNumberToUserOffset = 1;
-
-            return Ratings.Count + ratingsNumberToUserOffset;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        return Ratings.Count + ratingsNumberToUserOffset;
     }
 }

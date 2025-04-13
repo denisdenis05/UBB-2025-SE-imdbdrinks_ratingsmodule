@@ -49,7 +49,7 @@ public sealed partial class RatingWindow : Window, INotifyPropertyChanged
         if (clickedImage.DataContext is not Bottle clickedBottle)
             return;
 
-        int clickedBottleNumber = Bottles.IndexOf(clickedBottle);
+        int clickedBottleNumber = Bottles.IndexOf(clickedBottle) + BottleRatingToIndexOffset;
 
         foreach (var currentRatingBottle in Enumerable.Range(MinimumRatingScore, clickedBottleNumber))
         {
@@ -61,12 +61,12 @@ public sealed partial class RatingWindow : Window, INotifyPropertyChanged
                 Bottles[bottleIndex].ImageSource = AssetConstants.EmptyBottlePath;
         }
 
-        RatingScore = clickedBottleNumber + BottleRatingToIndexOffset;
+        RatingScore = clickedBottleNumber;
     }
 
     private void RateButton_Click(object sender, RoutedEventArgs e)
     {
-        if (RatingScore == MinimumRatingScore)
+        if (RatingScore < MinimumRatingScore)
             return;
 
         ratingViewModel.AddRating(PlaceholderItemId, RatingScore);
