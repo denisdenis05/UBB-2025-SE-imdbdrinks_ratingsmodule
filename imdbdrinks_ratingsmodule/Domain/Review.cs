@@ -23,5 +23,11 @@
         {
             return !string.IsNullOrWhiteSpace(this.Content) && this.Content.Length <= MaxContentLength;
         }
+
+        public void Activate()
+        {
+            this.IsActive = true;
+            this.CreationDate = DateTime.Now;
+        }
     }
 }

@@ -42,7 +42,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
 
         public void AddReview(Review review)
         {
-            _reviewService.CreateReview(review);
+            _reviewService.AddReview(review);
             LoadReviewsForRating(review.RatingId);
         }
 
