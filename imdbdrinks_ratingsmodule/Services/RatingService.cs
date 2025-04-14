@@ -31,7 +31,6 @@ public class RatingService
         return this.ratingRepository.AddRating(rating);
     }
 
-    // work in progress
     public Rating UpdateRating(Rating rating)
     {
         if (!rating.IsValid())
