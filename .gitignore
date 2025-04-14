@@ -34,3 +34,5 @@ bld/
 
 apikey.json
 /imdbdrinks_ratingsmodule/appsettings.json
+
+.idea/

@@ -1,9 +1,10 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace imdbdrinks_ratingsmodule.Repositories;
 
-public class DatabaseConnection
+public class DatabaseConnection : IDatabaseConnection
 {
     private readonly string _connectionString;
 
