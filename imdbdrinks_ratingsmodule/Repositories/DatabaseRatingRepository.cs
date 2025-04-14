@@ -11,183 +11,89 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
         public DatabaseRatingRepository(DatabaseConnection databaseConnection)
         {
-            this.databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
+            this.databaseConnection = databaseConnection;
         }
 
-        public void Delete(long ratingId)
+        public void DeleteRatingById(int ratingId)
         {
-            try
-            {
-                using var connection = this.databaseConnection.CreateConnection();
-                using var command = connection.CreateCommand();
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-                command.CommandText = "DELETE FROM Ratings WHERE RatingId = @RatingId";
-                command.Parameters.AddWithValue("@RatingId", ratingId);
-
-                connection.Open();
-                command.ExecuteNonQuery();
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Failed to delete rating", ex);
-            }
+            using var deleteRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateDeleteRatingById(connection, ratingId);
+            deleteRatingByIdCommand.ExecuteNonQuery();
         }
 
-        public IEnumerable<Rating> FindAll()
+        public IEnumerable<Rating> GetAllRatings()
         {
-            var ratings = new List<Rating>();
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-            try
-            {
-                using var connection = this.databaseConnection.CreateConnection();
-                using var command = connection.CreateCommand();
+            using var getAllRatingsCommand = DatabaseRatingRepositoryHelper.CreateGetAllRatingsCommand(connection);
+            using var reader = getAllRatingsCommand.ExecuteReader();
 
-                command.CommandText = "SELECT * FROM Ratings";
-
-                connection.Open();
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    ratings.Add(new Rating
-                    {
-                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                        ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
-                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                        RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
-                        RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
-                        IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
-                    });
-                }
-
-                return ratings;
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Failed to retrieve ratings", ex);
-            }
+            return DatabaseRatingRepositoryHelper.ExhaustRatingReader(reader);
         }
 
-        public Rating FindById(long ratingId)
+        public Rating GetRatingById(int ratingId)
         {
-            try
-            {
-                using var connection = this.databaseConnection.CreateConnection();
-                using var command = connection.CreateCommand();
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-                command.CommandText = "SELECT * FROM Ratings WHERE RatingId = @RatingId";
-                command.Parameters.AddWithValue("@RatingId", ratingId);
+            using var getRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingByIdCommand(connection, ratingId);
+            using var reader = getRatingByIdCommand.ExecuteReader();
 
-                connection.Open();
-                using var reader = command.ExecuteReader();
-
-                if (reader.Read())
-                {
-                    return new Rating
-                    {
-                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                        ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
-                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                        RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
-                        RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
-                        IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
-                    };
-                }
-
-                return null;
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Failed to retrieve rating", ex);
-            }
+            return DatabaseRatingRepositoryHelper.ExhaustSingleRatingReader(reader);
         }
 
-        public IEnumerable<Rating> FindByProductId(long productId)
+        public IEnumerable<Rating> GetRatingsByProductId(int productId)
         {
-            var ratings = new List<Rating>();
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-            try
-            {
-                using var connection = this.databaseConnection.CreateConnection();
-                using var command = connection.CreateCommand();
+            using var getRatingsByProductIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingsByProductIdCommand(connection, productId);
+            using var reader = getRatingsByProductIdCommand.ExecuteReader();
 
-                command.CommandText = "SELECT * FROM Ratings WHERE ProductId = @ProductId";
-                command.Parameters.AddWithValue("@ProductId", productId);
-
-                connection.Open();
-                using var reader = command.ExecuteReader();
-
-                while (reader.Read())
-                {
-                    ratings.Add(new Rating
-                    {
-                        RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                        ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
-                        UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                        RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
-                        RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
-                        IsActive = reader.GetByte(reader.GetOrdinal("IsActive")) == 1,
-                    });
-                }
-
-                return ratings;
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Failed to retrieve ratings", ex);
-            }
+            return DatabaseRatingRepositoryHelper.ExhaustRatingReader(reader);
         }
 
-        public Rating Save(Rating rating)
+        public Rating AddRating(Rating rating)
         {
-            try
-            {
-                using var connection = this.databaseConnection.CreateConnection();
-                using var command = connection.CreateCommand();
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
 
-                // check if rating exists
-                var exists = this.FindById(rating.RatingId) != null;
-
-                if (exists)
-                {
-                    // update rating
-                    command.CommandText = @"
-                        UPDATE Ratings
-                        SET ProductId = @ProductId, UserId = @UserId, RatingValue = @RatingValue, RatingDate = @RatingDate, IsActive = @IsActive
-                        WHERE RatingId = @RatingId";
-                    command.Parameters.AddWithValue("@RatingId", rating.RatingId);
-                    command.Parameters.AddWithValue("@ProductId", rating.ProductId);
-                    command.Parameters.AddWithValue("@UserId", rating.UserId);
-                    command.Parameters.AddWithValue("@RatingValue", rating.RatingValue);
-                    command.Parameters.AddWithValue("@RatingDate", rating.RatingDate);
-                    command.Parameters.AddWithValue("@IsActive", rating.IsActive);
-
-                    connection.Open();
-                    command.ExecuteNonQuery();
-                }
-                else
-                {
-                    // create rating
-                    command.CommandText = @"
-                        INSERT INTO Ratings (ProductId, UserId, RatingValue, RatingDate, IsActive)
-                        OUTPUT INSERTED.RatingId
-                        VALUES (@ProductId, @UserId, @RatingValue, @RatingDate, @IsActive)";
-                    command.Parameters.AddWithValue("@ProductId", rating.ProductId);
-                    command.Parameters.AddWithValue("@UserId", rating.UserId);
-                    command.Parameters.AddWithValue("@RatingValue", rating.RatingValue);
-                    command.Parameters.AddWithValue("@RatingDate", rating.RatingDate);
-                    command.Parameters.AddWithValue("@IsActive", rating.IsActive);
-
-                    connection.Open();
-                    rating.RatingId = (int)command.ExecuteScalar();
-                }
-            }
-            catch (SqlException ex)
-            {
-                throw new Exception("Failed to save rating", ex);
-            }
+            using var addCommand = DatabaseRatingRepositoryHelper.CreateAddRatingCommand(connection, rating);
+            rating.RatingId = (int)addCommand.ExecuteScalar();
 
             return rating;
+        }
+
+        public Rating UpdateRating(Rating rating)
+        {
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var updateCommand = DatabaseRatingRepositoryHelper.CreateUpdateRatingCommand(connection, rating);
+            updateCommand.ExecuteNonQuery();
+
+            return rating;
+        }
+
+        public Rating AddOrUpdateRating(Rating rating)
+        {
+            using var connection = this.databaseConnection.CreateConnection();
+            connection.Open();
+
+            using var checkIfExistsCommand = DatabaseRatingRepositoryHelper.CreateCheckIfRatingWithIdExistsCommand(connection, rating.RatingId);
+            var existsRating = Convert.ToBoolean(checkIfExistsCommand.ExecuteScalar());
+
+            if (existsRating)
+            {
+                return UpdateRating(rating);
+            }
+            else
+            {
+                return AddRating(rating);
+            }
         }
     }
 }
