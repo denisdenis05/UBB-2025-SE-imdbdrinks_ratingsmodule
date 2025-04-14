@@ -25,10 +25,11 @@ namespace imdbdrinks_ratingsmodule.Test
         [Test]
         public void GetRatingById_WhenRatingExists_ReturnsRating()
         {
-            var expected = new Rating { RatingId = 1 };
-            _repository.Setup(r => r.FindById(1)).Returns(expected);
+            var ratingId = 1;
+            var expected = new Rating { RatingId = ratingId };
+            _repository.Setup(r => r.FindById(ratingId)).Returns(expected);
 
-            var result = _service.GetRatingById(1);
+            var result = _service.GetRatingById(ratingId);
 
             Assert.That(result, Is.EqualTo(expected));
         }
@@ -36,9 +37,10 @@ namespace imdbdrinks_ratingsmodule.Test
         [Test]
         public void GetRatingById_WhenRatingDoesNotExist_ReturnsNull()
         {
+            var ratingId = 999;
             _repository.Setup(r => r.FindById(It.IsAny<int>())).Returns((Rating)null);
 
-            var result = _service.GetRatingById(999);
+            var result = _service.GetRatingById(ratingId);
 
             Assert.That(result, Is.Null);
         }

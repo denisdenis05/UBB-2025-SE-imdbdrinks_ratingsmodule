@@ -22,23 +22,26 @@ namespace imdbdrinks_ratingsmodule.Test
             _service = new RatingService(_repository.Object);
         }
 
+        private const int productId = 1;
+
         [Test]
         public void GetRatingsByProduct_WhenRatingsExist_ReturnsCorrectCount()
         {
             var ratings = new List<Rating> { new Rating(), new Rating() };
-            _repository.Setup(r => r.FindByProductId(1)).Returns(ratings);
+            var expectedRatingsCount = ratings.Count;
+            _repository.Setup(r => r.FindByProductId(productId)).Returns(ratings);
 
-            var result = _service.GetRatingsByProduct(1);
+            var result = _service.GetRatingsByProduct(productId);
 
-            Assert.That(result.Count(), Is.EqualTo(2));
+            Assert.That(result.Count(), Is.EqualTo(expectedRatingsCount));
         }
 
         [Test]
         public void GetRatingsByProduct_WhenNoRatingsExist_ReturnsEmptyCollection()
         {
-            _repository.Setup(r => r.FindByProductId(1)).Returns(new List<Rating>());
+            _repository.Setup(r => r.FindByProductId(productId)).Returns(new List<Rating>());
 
-            var result = _service.GetRatingsByProduct(1);
+            var result = _service.GetRatingsByProduct(productId);
 
             Assert.That(result, Is.Empty);
         }

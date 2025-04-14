@@ -43,9 +43,10 @@ namespace imdbdrinks_ratingsmodule.Test
         [Test]
         public void AddReview_WhenContentTooLong_ThrowsArgumentException()
         {
+            var timesToRepeat = 600;
             var review = new Review
             {
-                Content = new string('a', 600) // Invalid
+                Content = new string('a', timesToRepeat) // Invalid
             };
 
             var ex = Assert.Throws<ArgumentException>(() => _service.AddReview(review));

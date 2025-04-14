@@ -24,9 +24,10 @@ namespace imdbdrinks_ratingsmodule.Test
         [Test]
         public void DeleteReviewById_WhenCalled_InvokesRepositoryDelete()
         {
-            _service.DeleteReviewById(123);
+            var reviewId = 123;
+            _service.DeleteReviewById(reviewId);
 
-            _repository.Verify(r => r.DeleteReviewById(123), Times.Once);
+            _repository.Verify(r => r.DeleteReviewById(reviewId), Times.Once);
         }
     }
 }

@@ -24,17 +24,19 @@ namespace imdbdrinks_ratingsmodule.Test
 
         [Test]
         public void GetReviewsByRating_WhenCalled_ReturnsExpectedReviews()
-        {
+        {   
+            var ratingId = 1;
             var expectedReviews = new List<Review>
             {
-                new Review { RatingId = 1, Content = "Nice." },
-                new Review { RatingId = 1, Content = "Loved it!" }
+                new Review { RatingId = ratingId, Content = "Nice." },
+                new Review { RatingId = ratingId, Content = "Loved it!" }
             };
-            _repository.Setup(r => r.GetReviewsByRatingId(1)).Returns(expectedReviews);
+            var expectedReviewCount = expectedReviews.Count;
+            _repository.Setup(r => r.GetReviewsByRatingId(ratingId)).Returns(expectedReviews);
 
-            var result = _service.GetReviewsByRating(1);
+            var result = _service.GetReviewsByRating(ratingId);
 
-            Assert.That(result.Count(), Is.EqualTo(2));
+            Assert.That(result.Count(), Is.EqualTo(expectedReviewCount));
         }
     }
 }

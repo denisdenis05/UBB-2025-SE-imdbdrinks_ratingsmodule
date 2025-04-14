@@ -22,6 +22,8 @@ namespace imdbdrinks_ratingsmodule.Test
             _service = new RatingService(_repository.Object);
         }
 
+        private const int productId = 1;
+
         [Test]
         public void GetAverageRating_WhenActiveRatingsExist_ReturnsCorrectAverage()
         {
@@ -31,21 +33,21 @@ namespace imdbdrinks_ratingsmodule.Test
                 new Rating { RatingValue = 4.0, IsActive = true },
                 new Rating { RatingValue = 5.0, IsActive = false }
             };
+            var expectedAverage = (3.0 + 4.0) / 2;
+            _repository.Setup(r => r.FindByProductId(productId)).Returns(ratings);
 
-            _repository.Setup(r => r.FindByProductId(1)).Returns(ratings);
+            var result = _service.GetAverageRating(productId);
 
-            var result = _service.GetAverageRating(1);
-
-            Assert.That(result, Is.EqualTo(3.5));
+            Assert.That(result, Is.EqualTo(expectedAverage));
         }
 
         [Test]
         public void GetAverageRating_WhenNoActiveRatingsExist_ReturnsZero()
         {
             var ratings = new List<Rating>();
-            _repository.Setup(r => r.FindByProductId(1)).Returns(ratings);
+            _repository.Setup(r => r.FindByProductId(productId)).Returns(ratings);
 
-            var result = _service.GetAverageRating(1);
+            var result = _service.GetAverageRating(productId);
 
             Assert.That(result, Is.Zero);
         }
