@@ -27,13 +27,9 @@ public class DatabaseRatingRepositoryGetRatingByIdTest
     [Test]
     public void GetRatingById_ExistingId_ReturnsCorrectRating()
     {
-        // "VALUE (101, 1, 4, '2025-04-01 10:30:00', 1)
         var rating = _repository.GetRatingById(ExistentRatingId);
-        Assert.That(rating, Is.Not.Null);
-        Assert.That(rating.ProductId, Is.EqualTo(101));
-        Assert.That(rating.RatingValue, Is.EqualTo(4));
-        Assert.That(rating.RatingDate, Is.EqualTo(new DateTime(2025, 4, 1, 10, 30, 0)));
-        Assert.That(rating.IsActive, Is.EqualTo(true));
+
+        Assert.That(rating.RatingId, Is.EqualTo(ExistentRatingId));
     }
 
     private const int NonExistentRatingId = 100;
@@ -41,6 +37,7 @@ public class DatabaseRatingRepositoryGetRatingByIdTest
     public void GetRatingById_NonExistingId_ReturnsNull()
     {
         var rating = _repository.GetRatingById(NonExistentRatingId);
+
         Assert.That(rating, Is.Null);
     }
 

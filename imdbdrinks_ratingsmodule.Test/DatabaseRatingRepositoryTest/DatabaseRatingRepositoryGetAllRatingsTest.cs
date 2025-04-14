@@ -5,7 +5,7 @@ using Moq;
 
 namespace imdbdrinks_ratingsmodule.Test;
 
-public class DatabaseRatingRepositoryFindAllTest
+public class DatabaseRatingRepositoryGetAllRatingsTest
 {
 
     private IRatingRepository _repository;
@@ -23,13 +23,13 @@ public class DatabaseRatingRepositoryFindAllTest
         _repository = new DatabaseRatingRepository(databaseConnection.Object);
     }
 
+    private const int InitialNumberOfRatings = 3;
     [Test]
     public void GetAllRatings_WhenCalled_ReturnsAllExistingRatings()
     {
         var allRatings = _repository.GetAllRatings();
 
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(3));
+        Assert.That(allRatings.Count, Is.EqualTo(InitialNumberOfRatings));
     }
 
 }

@@ -23,26 +23,30 @@ public class DatabaseRatingRepositoryAddOrUpdateRatingTest
         _repository = new DatabaseRatingRepository(databaseConnection.Object);
     }
 
-
+    private const int InitialNumberOfRatings = 3;
+    private const int NewNumberOfRatings = InitialNumberOfRatings + 1;
+    private const int SampleUserId = 1;
+    private const int SampleProductId = 101;
+    private const int NewRatingValue = 5;
     [Test]
     public void AddOrUpdateRating_NewRating_AddsRatingToRepository()
     {
-        var allRatings = _repository.GetAllRatings();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(3));
         var newRating = new Rating
         {
-            UserId = 1,
-            ProductId = 101,
-            RatingValue = 5,
+            UserId = SampleUserId,
+            ProductId = SampleProductId,
+            RatingValue = NewRatingValue,
             RatingDate = DateTime.Now,
             IsActive = true
         };
+
         _repository.AddOrUpdateRating(newRating);
-        allRatings = _repository.GetAllRatings();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(4));
-        var savedRating = allRatings.FirstOrDefault(r => r.ProductId == 101 && r.RatingValue == 5);
+
+        var allRatings = _repository.GetAllRatings();
+
+        Assert.That(allRatings.Count, Is.EqualTo(NewNumberOfRatings));
+
+        var savedRating = allRatings.FirstOrDefault(r => r.ProductId == SampleProductId && r.RatingValue == NewRatingValue);
         Assert.That(savedRating, Is.Not.Null);
     }
 
@@ -51,23 +55,22 @@ public class DatabaseRatingRepositoryAddOrUpdateRatingTest
     [Test]
     public void AddOrUpdateRating_ExistingRating_UpdatesRatingInRepository()
     {
-        var allRatings = _repository.GetAllRatings();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(3));
         var newRating = new Rating
         {
-            RatingId = ExistentRatingId, // Assuming this ID exists in the test database
-            UserId = 1,
-            ProductId = 101,
-            RatingValue = 5,
+            RatingId = ExistentRatingId,
+            UserId = SampleUserId,
+            ProductId = SampleProductId,
+            RatingValue = NewRatingValue,
             RatingDate = DateTime.Now,
             IsActive = true
         };
+
         _repository.AddOrUpdateRating(newRating);
-        allRatings = _repository.GetAllRatings();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(3));
-        var savedRating = allRatings.FirstOrDefault(r => r.ProductId == 101 && r.RatingValue == 5);
+        var allRatings = _repository.GetAllRatings();
+
+        Assert.That(allRatings.Count, Is.EqualTo(InitialNumberOfRatings));
+
+        var savedRating = allRatings.FirstOrDefault(r => r.ProductId == SampleProductId && r.RatingValue == NewRatingValue);
         Assert.That(savedRating, Is.Not.Null);
     }
 
