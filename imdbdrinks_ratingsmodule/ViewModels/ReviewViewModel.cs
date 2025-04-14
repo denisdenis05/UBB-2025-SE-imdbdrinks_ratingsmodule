@@ -1,53 +1,76 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Diagnostics;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
 
-namespace imdbdrinks_ratingsmodule.ViewModels
+namespace imdbdrinks_ratingsmodule.ViewModels;
+
+public class ReviewViewModel : ViewModelBase
 {
-    public class ReviewViewModel : INotifyPropertyChanged
+    private readonly ReviewService reviewService;
+    private ObservableCollection<Review> reviews;
+    private Review selectedReview;
+    private string reviewContent;
+    private const int defaultUserId = 999;
+
+    public ObservableCollection<Review> Reviews
     {
-        private readonly ReviewService _reviewService;
-        private ObservableCollection<Review> _reviews;
+        get => reviews;
+        set => SetProperty(ref reviews, value);
+    }
 
-        public ObservableCollection<Review> Reviews
+    public Review SelectedReview
+    {
+        get => selectedReview;
+        set => SetProperty(ref selectedReview, value);
+    }
+
+    public string ReviewContent
+    {
+        get => reviewContent;
+        set => SetProperty(ref reviewContent, value);
+    }
+
+    public ReviewViewModel(ReviewService reviewService)
+    {
+        this.reviewService = reviewService;
+        Reviews = new ObservableCollection<Review>();
+    }
+
+    public void LoadReviewsForRating(int ratingId)
+    {
+        var reviews = reviewService.GetReviewsByRating(ratingId);
+        Reviews.Clear();
+        foreach (var review in reviews)
         {
-            get => _reviews;
-            set { _reviews = value; OnPropertyChanged(); }
+            Reviews.Add(review);
+        }
+    }
+
+    public void AddReview(int ratingId)
+    {
+        Debug.WriteLine(ReviewContent);
+
+        if (string.IsNullOrWhiteSpace(ReviewContent))
+        {
+            return;
         }
 
-        private Review _selectedReview;
-        public Review SelectedReview
+        var newReview = new Review
         {
-            get => _selectedReview;
-            set { _selectedReview = value; OnPropertyChanged(); }
-        }
+            RatingId = ratingId,
+            UserId = defaultUserId,
+            Content = ReviewContent,
+            IsActive = true
+        };
 
-        public ReviewViewModel(ReviewService reviewService)
-        {
-            _reviewService = reviewService;
-            Reviews = new ObservableCollection<Review>();
-        }
+        reviewService.AddReview(newReview);
+        LoadReviewsForRating(ratingId);
+        ReviewContent = string.Empty;
+    }
 
-        public void LoadReviewsForRating(int ratingId)
-        {
-            var reviews = _reviewService.GetReviewsByRating(ratingId);
-            Reviews.Clear();
-            foreach (var review in reviews)
-            {
-                Reviews.Add(review);
-            }
-        }
-
-        public void AddReview(Review review)
-        {
-            _reviewService.AddReview(review);
-            LoadReviewsForRating(review.RatingId);
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    public void ClearReviewContent()
+    {
+        ReviewContent = string.Empty;
     }
 }

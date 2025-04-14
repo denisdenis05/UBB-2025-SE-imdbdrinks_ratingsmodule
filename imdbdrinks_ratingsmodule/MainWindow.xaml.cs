@@ -1,91 +1,49 @@
-using Microsoft.UI.Xaml;
-using imdbdrinks_ratingsmodule.Repositories;
-using imdbdrinks_ratingsmodule.Services;
+using System;
 using imdbdrinks_ratingsmodule.ViewModels;
-using imdbdrinks_ratingsmodule.Domain;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.Extensions.Configuration;
-using System.Diagnostics;
-namespace imdbdrinks_ratingsmodule
+
+namespace imdbdrinks_ratingsmodule;
+
+public sealed partial class MainWindow : Window
 {
+    private readonly MainViewModel viewModel;
 
-    public sealed partial class MainWindow : Window
+    public MainWindow(MainViewModel viewModel)
     {
+        this.InitializeComponent();
+        this.viewModel = viewModel;
+        this.rootGrid.DataContext = viewModel;
+    }
 
-        private readonly IConfiguration _configuration;
-        // Public properties for binding.
-        public RatingViewModel ViewModel { get; set; }
-        public ReviewViewModel ReviewVM { get; set; }
-
-        public MainWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
+    private async void AddReview_Click(object sender, RoutedEventArgs e)
+    {
+        if (viewModel.SelectedRating != null)
         {
-            _configuration = configuration;
-            ViewModel = ratingViewModel;
-            ReviewVM = reviewViewModel;
-
-            this.InitializeComponent();
-
-            // Unique connection string for MySql database (change accordingly)
-            Debug.WriteLine(configuration);
-
-
-
-            // Create repository instances.
-            //var ratingRepo = new HardCodedRatingRepository();
-            //var reviewRepo = new HardCodedReviewRepository();
-
-            // Create service instances.
-
-            // Instantiate ViewModels.
-
-            // Load ratings for product ID 100.
-            ViewModel.LoadRatingsForProduct(100);
-            //if (ViewModel.Ratings.Count > 0)
-            //{
-            //    ViewModel.SelectedRating = ViewModel.Ratings[0];
-            //    ReviewVM.LoadReviewsForRating(ViewModel.SelectedRating.RatingId);
-            //}
+            var reviewWindow = new ReviewWindow(
+                viewModel.Configuration,
+                viewModel.RatingViewModel,
+                viewModel.ReviewViewModel);
+            reviewWindow.Activate();
         }
-
-        private void AddReview_Click(object sender, RoutedEventArgs e)
+        else
         {
-            if (ViewModel.SelectedRating != null)
-            {
-                var reviewWindow = new ReviewWindow(_configuration, ViewModel, ReviewVM);
-                reviewWindow.Activate();
-            }
-            else
-            {
-                NoRatingSelectedDialog.ShowAsync();
-            }
-            return;
-
+            await NoRatingSelectedDialog.ShowAsync();
         }
+    }
 
-        private void AddRating_Click(object sender, RoutedEventArgs e)
+    private void AddRating_Click(object sender, RoutedEventArgs e)
+    {
+        viewModel.ClearSelectedRating();
+        var ratingWindow = new RatingWindow(viewModel.RatingViewModel);
+        ratingWindow.Activate();
+    }
+
+    private void RatingSelection_Changed(object sender, RoutedEventArgs e)
+    {
+        if (sender is ListView listView)
         {
-
-            var ratingWindow = new RatingWindow(ViewModel);
-            ViewModel.SelectedRating = null;
-            ratingWindow.Activate();
+            viewModel.HandleRatingSelection(listView);
         }
-     
-        private void RatingSelection_Changed(object sender, RoutedEventArgs e)
-        {
-            var listView = sender as ListView;
-
-            if (listView != null)
-            {
-                var selectedIndex = listView.SelectedIndex;
-
-                if (selectedIndex >= 0)
-                {
-                    var selectedRating = ViewModel.Ratings[selectedIndex];
-                    ViewModel.SelectedRating = selectedRating;
-                    ReviewVM.LoadReviewsForRating(selectedRating.RatingId);
-                }
-            }
-        }
-
     }
 }

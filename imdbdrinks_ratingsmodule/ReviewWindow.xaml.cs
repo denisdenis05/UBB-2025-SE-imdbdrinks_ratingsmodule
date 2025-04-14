@@ -1,93 +1,54 @@
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Controls.Primitives;
-using Microsoft.UI.Xaml.Data;
-using Microsoft.UI.Xaml.Input;
-using Microsoft.UI.Xaml.Media;
-using Microsoft.UI.Xaml.Navigation;
-using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.ViewModels;
 using Microsoft.Extensions.Configuration;
+using Microsoft.UI.Xaml;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace imdbdrinks_ratingsmodule
+namespace imdbdrinks_ratingsmodule;
+/// <summary>
+/// An empty window that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class ReviewWindow : Window
 {
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class ReviewWindow : Window
+    private readonly IConfiguration configuration;
+    private readonly RatingViewModel ratingViewModel;
+    private readonly ReviewViewModel reviewViewModel;
+
+    public ReviewWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
     {
-        private IConfiguration _configuration;
-        public RatingViewModel ViewModel { get; set; }
-        public ReviewViewModel ReviewVM { get; set; }
+        this.configuration = configuration;
+        this.ratingViewModel = ratingViewModel;
+        this.reviewViewModel = reviewViewModel;
 
-        public ReviewWindow(IConfiguration configuration, RatingViewModel viewModel, ReviewViewModel reviewVM)
+        this.InitializeComponent();
+        this.rootGrid.DataContext = reviewViewModel;
+    }
+
+    private async void SubmitReview_Click(object sender, RoutedEventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(reviewViewModel.ReviewContent))
         {
-            _configuration = configuration;
-
-            this.InitializeComponent();
-            ViewModel = viewModel;
-            ReviewVM = reviewVM;
+            await EmptyReviewDialog.ShowAsync();
+            return;
         }
 
-        private async void SubmitReview_Click(object sender, RoutedEventArgs e)
+        if (ratingViewModel.SelectedRating != null)
         {
-            // Get the review text.
-            string content = ReviewTextBox.Text;
-
-            if (string.IsNullOrWhiteSpace(content))
-            {
-                // Show error dialog
-                await EmptyReviewDialog.ShowAsync();
-                return; // Exit the method without proceeding
-            }
-
-            if (!string.IsNullOrWhiteSpace(content))
-            {
-                // Determine the rating ID.
-                // If no rating is selected, use a default value (e.g., 0).
-                var ratingId = ViewModel.SelectedRating != null ? ViewModel.SelectedRating.RatingId : 0;
-
-                // Create a new review.
-                var newReview = new Review
-                {
-                    RatingId = ratingId,
-                    UserId = 999, // Update with the actual user id if needed.
-                    Content = content,
-                    IsActive = true
-                    // CreationDate can be set here or in the service layer.
-                };
-
-                // Add the review via the Review ViewModel.
-                ReviewVM.AddReview(newReview);
-
-                // Clear the TextBox.
-                ReviewTextBox.Text = string.Empty;
-                this.Close();
-            }
+            reviewViewModel.AddReview(ratingViewModel.SelectedRating.RatingId);
+            this.Close();
         }
+    }
 
+    private void GenerateAIReview_Click(object sender, RoutedEventArgs e)
+    {
+        var aiReviewWindow = new AIReviewWindow(configuration, OnAIReviewGenerated);
+        aiReviewWindow.Activate();
+    }
 
-        private void GenerateAIReview_Click(object sender, RoutedEventArgs e)
-        {
-            string aiGeneratedReview = "This is an AI-generated review based on your input.";
-
-            var aiReviewWindow = new AIReviewWindow(_configuration, OnAIReviewGenerated);
-            aiReviewWindow.Activate();
-        }
-
-        private void OnAIReviewGenerated(string aiReview)
-        {
-            ReviewTextBox.Text = aiReview;
-        }
+    private void OnAIReviewGenerated(string aiReview)
+    {
+        reviewViewModel.ReviewContent = aiReview;
     }
 }

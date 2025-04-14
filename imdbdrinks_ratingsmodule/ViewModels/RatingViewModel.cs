@@ -1,87 +1,118 @@
-﻿using System;
+﻿namespace imdbdrinks_ratingsmodule.ViewModels;
+
+using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
+using imdbdrinks_ratingsmodule.Constants;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
+using imdbdrinks_ratingsmodule.ViewHelpers;
 
-namespace imdbdrinks_ratingsmodule.ViewModels
+public class RatingViewModel: ViewModelBase
 {
-    public class RatingViewModel : INotifyPropertyChanged
+    private readonly RatingService ratingService;
+    private ObservableCollection<Rating> ratings;
+    private Rating selectedRating;
+    private double averageRating;
+    private ObservableCollection<BottleAsset> bottles;
+    private int ratingScore;
+
+    public ObservableCollection<Rating> Ratings
     {
-        private readonly RatingService _ratingService;
-        private ObservableCollection<Rating> _ratings;
+        get => ratings;
+        set => ratings = value;
+    }
 
-        public ObservableCollection<Rating> Ratings
+    public Rating SelectedRating
+    {
+        get => selectedRating;
+        set => selectedRating = value;
+    }
+
+    public double AverageRating
+    {
+        get => averageRating;
+        set => averageRating = Math.Round(value, 2);
+    }
+
+    public ObservableCollection<BottleAsset> Bottles
+    {
+        get => bottles;
+        set => bottles = value;
+    }
+
+    public int RatingScore
+    {
+        get => ratingScore;
+        set => ratingScore = value;
+    }
+
+    private const int BottleRatingToIndexOffset = 1;
+    private const int RatingsCountToUserOffset = 1;
+    private const int PlaceholderItemId = 100;
+
+    public RatingViewModel(RatingService ratingService)
+    {
+        this.ratingService = ratingService;
+        Ratings = new ObservableCollection<Rating>();
+        InitializeBottles();
+    }
+
+    private void InitializeBottles()
+    {
+        Bottles = new ObservableCollection<BottleAsset>();
+        foreach (var currentRating in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
         {
-            get => _ratings;
-            set
-            {
-                if (_ratings != value)
-                {
-                    _ratings = value;
-                    OnPropertyChanged();
-                }
-            }
+            var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
+            Bottles.Add(bottleToAdd);
+        }
+    }
+
+    public void UpdateBottleRating(int clickedBottleNumber)
+    {
+        foreach (var currentRatingBottle in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
+        {
+            var bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
+            Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber 
+                ? AssetConstants.FilledBottlePath 
+                : AssetConstants.EmptyBottlePath;
         }
 
-        private Rating _selectedRating;
-        public Rating SelectedRating
-        {
-            get => _selectedRating;
-            set
-            {
-                if (_selectedRating != value)
-                {
-                    _selectedRating = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        RatingScore = clickedBottleNumber;
+    }
 
-        private double _averageRating;
-        public double AverageRating
-        {
-            get => _averageRating;
-            set
-            {
-                double roundedValue = Math.Round(value, 2);
-                if (_averageRating != roundedValue)
-                {
-                    _averageRating = roundedValue;
-                    OnPropertyChanged();
-                }
-            }
-        }
+    public void AddRating()
+    {
+        if (RatingScore < RatingDomainConstants.MinRatingValue)
+            return;
 
-        public RatingViewModel(RatingService ratingService)
+        Rating rating = new Rating
         {
-            _ratingService = ratingService;
-            Ratings = new ObservableCollection<Rating>();
-        }
+            ProductId = PlaceholderItemId,
+            RatingValue = RatingScore,
+            UserId = GetUserId()
+        };
 
-        public void LoadRatingsForProduct(int productId)
-        {
-            var ratings = _ratingService.GetRatingsByProduct(productId);
-            Ratings.Clear();
-            // Reverse the order so that the newest rating appears first
-            foreach (var rating in ratings.Reverse())
-            {
-                Ratings.Add(rating);
-            }
-            AverageRating = _ratingService.GetAverageRating(productId);
-        }
+        ratingService.CreateRating(rating);
+        LoadRatingsForProduct(rating.ProductId);
+    }
 
-        public void AddRating(Rating rating)
-        {
-            _ratingService.CreateRating(rating);
-            // Reload the ratings so that the new one appears at the top
-            LoadRatingsForProduct(rating.ProductId);
-        }
+    public void LoadRatingsForProduct(int productId)
+    {
+    var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
+    var ratingsOrderedByNewest = ratingsForProduct.Reverse();
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    Ratings.Clear();
+    foreach (var rating in ratingsOrderedByNewest)
+    {
+        Ratings.Add(rating);
+    }
+
+    AverageRating = ratingService.GetAverageRating(productId);
+    }
+
+    private int GetUserId()
+    {
+        return Ratings.Count + RatingsCountToUserOffset;
     }
 }
