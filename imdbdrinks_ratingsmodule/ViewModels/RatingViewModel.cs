@@ -98,7 +98,7 @@ public class RatingViewModel: ViewModelBase
         LoadRatingsForProduct(rating.ProductId);
     }
 
-    public void LoadRatingsForProduct(long productId)
+        public void LoadRatingsForProduct(int productId)
     {
         var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
         var ratingsOrderedByNewest = ratingsForProduct.Reverse();

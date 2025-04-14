@@ -1,25 +1,19 @@
-﻿namespace imdbdrinks_ratingsmodule.Repositories
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
+
+namespace imdbdrinks_ratingsmodule.Repositories;
+
+public class DatabaseConnection
 {
-    using System;
-    using imdbdrinks_ratingsmodule.Constants.ErrorMessages;
-    using Microsoft.Data.SqlClient;
-    using Microsoft.Extensions.Configuration;
+    private readonly string _connectionString;
 
-    public class DatabaseConnection
+    public DatabaseConnection(IConfiguration configuration)
     {
-        private readonly string connectionString;
+        _connectionString = configuration["DbConnection"];
+    }
 
-        public DatabaseConnection(IConfiguration configuration)
-        {
-            ArgumentNullException.ThrowIfNull(configuration);
-
-            this.connectionString = configuration["DbConnection"]
-                ?? throw new InvalidOperationException(DatabaseConnectionErrorMessages.ConnectionStringNotFound);
-        }
-
-        public SqlConnection CreateConnection()
-        {
-            return new SqlConnection(this.connectionString);
-        }
+    public SqlConnection CreateConnection()
+    {
+        return new SqlConnection(_connectionString);
     }
 }
