@@ -1,4 +1,5 @@
 ﻿using System;
+using imdbdrinks_ratingsmodule.Constants;
 
 namespace imdbdrinks_ratingsmodule.Domain
 {
@@ -12,6 +13,6 @@ namespace imdbdrinks_ratingsmodule.Domain
         public bool IsActive { get; set; }
 
         // Validate the rating is between 1 and 5.
-        public bool IsValid() => RatingValue >= 1 && RatingValue <= 5;
+        public bool IsValid() => RatingValue >= RatingDomainConstants.MinRatingValue && RatingValue <= RatingDomainConstants.MaxRatingValue;
     }
 }
