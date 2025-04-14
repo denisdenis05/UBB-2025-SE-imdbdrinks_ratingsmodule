@@ -55,6 +55,7 @@ namespace imdbdrinks_ratingsmodule
 
             services.AddSingleton<RatingViewModel>();
             services.AddSingleton<ReviewViewModel>();
+            services.AddSingleton<MainViewModel>();
 
             services.AddTransient<RatingService>();
             services.AddTransient<ReviewService>();

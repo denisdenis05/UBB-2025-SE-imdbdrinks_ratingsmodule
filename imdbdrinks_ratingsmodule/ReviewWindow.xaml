@@ -9,13 +9,14 @@
     mc:Ignorable="d"
     Title="ReviewWindow">
 
-    <Grid Padding="30">
+    <Grid Padding="30" x:Name="rootGrid">
         <StackPanel Orientation="Vertical">
             <TextBlock Text="Leave a Review:" FontSize="24" FontWeight="Bold" FontFamily="{StaticResource FontFamily}"
                 Margin="0,20,0,40" HorizontalAlignment="Center"/>
             
-            <TextBox x:Name="ReviewTextBox" PlaceholderText="Enter your review here" Margin="0,0,0,40"
-                Height="100" Width="500" BorderBrush="#3d3d3d" FontFamily="{StaticResource FontFamily}" />
+            <TextBox PlaceholderText="Enter your review here" Margin="0,0,0,40"
+                Height="100" Width="500" BorderBrush="#3d3d3d" FontFamily="{StaticResource FontFamily}"
+                Text="{Binding ReviewContent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
             
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Width="Auto">
                 <Button Content="Submit Review" Click="SubmitReview_Click" Margin="0,0,20,0" 
@@ -27,8 +28,8 @@
             </StackPanel>
         </StackPanel>
         <ContentDialog x:Name="EmptyReviewDialog"
-    Title="Empty Review"
-    Content="Please enter review text before submitting."
-    CloseButtonText="OK" />
+            Title="Empty Review"
+            Content="Please enter review text before submitting."
+            CloseButtonText="OK" />
     </Grid>
 </Window>
