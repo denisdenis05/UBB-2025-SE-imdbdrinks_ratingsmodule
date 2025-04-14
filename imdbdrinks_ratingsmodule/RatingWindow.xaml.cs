@@ -1,41 +1,61 @@
-namespace imdbdrinks_ratingsmodule;
-
-using Microsoft.UI.Xaml;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Input;
-using imdbdrinks_ratingsmodule.ViewModels;
-using imdbdrinks_ratingsmodule.Domain;
-using imdbdrinks_ratingsmodule.ViewHelpers;
-
-public sealed partial class RatingWindow : Window
+namespace imdbdrinks_ratingsmodule
 {
-    private readonly RatingViewModel ratingViewModel;
-    private const int BottleRatingToIndexOffset = 1;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Input;
+    using imdbdrinks_ratingsmodule.Domain;
+    using imdbdrinks_ratingsmodule.ViewHelpers;
+    using imdbdrinks_ratingsmodule.ViewModels;
 
-    public RatingWindow(RatingViewModel viewModel)
+    /// <summary>
+    /// Represents the window used to create or edit a rating.
+    /// </summary>
+    public sealed partial class RatingWindow : Window
     {
-        this.InitializeComponent();
-        this.ratingViewModel = viewModel;
-        this.rootGrid.DataContext = viewModel;
-    }
+        private const int BottleRatingToIndexOffset = 1;
+        private readonly RatingViewModel ratingViewModel;
 
-    private void Bottle_Click(object sender, TappedRoutedEventArgs e)
-    {
-        if (sender is not Image clickedImage)
-            return;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RatingWindow"/> class.
+        /// </summary>
+        /// <param name="viewModel">The rating view model.</param>
+        public RatingWindow(RatingViewModel viewModel)
+        {
+            this.InitializeComponent();
+            this.ratingViewModel = viewModel;
+            this.rootGrid.DataContext = viewModel;
+        }
 
-        if (clickedImage.DataContext is not BottleAsset clickedBottle)
-            return;
+        /// <summary>
+        /// Handles the event when a bottle is clicked.
+        /// </summary>
+        /// <param name="sender">The sender object.</param>
+        /// <param name="e">The tapped routed event arguments.</param>
+        private void Bottle_Click(object sender, TappedRoutedEventArgs e)
+        {
+            if (sender is not Image clickedImage)
+            {
+                return;
+            }
 
-        int clickedBottleNumber = ratingViewModel.Bottles.IndexOf(clickedBottle) + BottleRatingToIndexOffset;
+            if (clickedImage.DataContext is not BottleAsset clickedBottle)
+            {
+                return;
+            }
 
-        ratingViewModel.UpdateBottleRating(clickedBottleNumber);
-    }
+            int clickedBottleNumber = this.ratingViewModel.Bottles.IndexOf(clickedBottle) + BottleRatingToIndexOffset;
+            this.ratingViewModel.UpdateBottleRating(clickedBottleNumber);
+        }
 
-    private void RateButton_Click(object sender, RoutedEventArgs e)
-    {
-        ratingViewModel.AddRating();
-
-        this.Close();
+        /// <summary>
+        /// Handles the event when the rate button is clicked.
+        /// </summary>
+        /// <param name="sender">The sender object.</param>
+        /// <param name="e">The routed event arguments.</param>
+        private void RateButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.ratingViewModel.AddRating();
+            this.Close();
+        }
     }
 }
