@@ -16,5 +16,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         Rating UpdateRating(Rating rating);
 
         void DeleteRatingById(int ratingId);
+
+        Rating AddOrUpdateRating(Rating rating);
     }
 }
