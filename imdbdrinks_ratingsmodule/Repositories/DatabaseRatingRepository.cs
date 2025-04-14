@@ -84,9 +84,9 @@ namespace imdbdrinks_ratingsmodule.Repositories
             connection.Open();
 
             using var checkIfExistsCommand = DatabaseRatingRepositoryHelper.CreateCheckIfRatingWithIdExistsCommand(connection, rating.RatingId);
-            var exists = Convert.ToBoolean(checkIfExistsCommand.ExecuteScalar());
+            var existsRating = Convert.ToBoolean(checkIfExistsCommand.ExecuteScalar());
 
-            if (exists)
+            if (existsRating)
             {
                 return UpdateRating(rating);
             }
