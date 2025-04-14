@@ -27,12 +27,12 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.UpdateRating(It.IsAny<Rating>()))
-                .Returns<Rating>(r => r);
+            _repository.Setup(repository => repository.UpdateRating(It.IsAny<Rating>()))
+                .Returns<Rating>(rating => rating);
 
             _service.UpdateRating(rating);
 
-            _repository.Verify(r => r.UpdateRating(It.IsAny<Rating>()), Times.Once);
+            _repository.Verify(repository => repository.UpdateRating(It.IsAny<Rating>()), Times.Once);
         }
 
         [Test]
@@ -40,8 +40,8 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var input = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.UpdateRating(It.IsAny<Rating>()))
-                .Returns<Rating>(r => r);
+            _repository.Setup(repository => repository.UpdateRating(It.IsAny<Rating>()))
+                .Returns<Rating>(rating => rating);
 
             var result = _service.UpdateRating(input);
 
@@ -53,9 +53,9 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var invalidRating = new Rating { ProductId = 1, UserId = 1, RatingValue = 8 }; // Invalid
 
-            var ex = Assert.Throws<ArgumentException>(() => _service.UpdateRating(invalidRating));
+            var exception = Assert.Throws<ArgumentException>(() => _service.UpdateRating(invalidRating));
 
-            Assert.That(ex.Message, Is.EqualTo("Invalid rating value."));
+            Assert.That(exception.Message, Is.EqualTo("Invalid rating value."));
         }
 
     }

@@ -32,7 +32,7 @@ namespace imdbdrinks_ratingsmodule.Test
                 new Review { RatingId = ratingId, Content = "Loved it!" }
             };
             var expectedReviewCount = expectedReviews.Count;
-            _repository.Setup(r => r.GetReviewsByRatingId(ratingId)).Returns(expectedReviews);
+            _repository.Setup(repository => repository.GetReviewsByRatingId(ratingId)).Returns(expectedReviews);
 
             var result = _service.GetReviewsByRating(ratingId);
 

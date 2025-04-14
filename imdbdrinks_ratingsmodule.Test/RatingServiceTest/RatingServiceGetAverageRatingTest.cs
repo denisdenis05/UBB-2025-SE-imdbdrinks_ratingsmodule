@@ -34,7 +34,7 @@ namespace imdbdrinks_ratingsmodule.Test
                 new Rating { RatingValue = 5.0, IsActive = false }
             };
             var expectedAverage = (3.0 + 4.0) / 2;
-            _repository.Setup(r => r.GetRatingsByProductId(productId)).Returns(ratings);
+            _repository.Setup(repository => repository.GetRatingsByProductId(productId)).Returns(ratings);
 
             var result = _service.GetAverageRating(productId);
 
@@ -45,7 +45,7 @@ namespace imdbdrinks_ratingsmodule.Test
         public void GetAverageRating_WhenNoActiveRatingsExist_ReturnsZero()
         {
             var ratings = new List<Rating>();
-            _repository.Setup(r => r.GetRatingsByProductId(productId)).Returns(ratings);
+            _repository.Setup(repository => repository.GetRatingsByProductId(productId)).Returns(ratings);
 
             var result = _service.GetAverageRating(productId);
 

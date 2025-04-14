@@ -33,7 +33,7 @@ namespace imdbdrinks_ratingsmodule.Test
                 Content = "Awesome product!"
             };
 
-            _repository.Setup(r => r.AddOrUpdateReview(It.IsAny<Review>())).Returns<Review>(r => r);
+            _repository.Setup(repository => repository.AddOrUpdateReview(It.IsAny<Review>())).Returns<Review>(review => review);
 
             var result = _service.AddReview(review);
 
@@ -49,8 +49,8 @@ namespace imdbdrinks_ratingsmodule.Test
                 Content = new string('a', timesToRepeat) // Invalid
             };
 
-            var ex = Assert.Throws<ArgumentException>(() => _service.AddReview(review));
-            Assert.That(ex.Message, Is.EqualTo(ReviewServiceErrorMessages.InvalidReview));
+            var exception = Assert.Throws<ArgumentException>(() => _service.AddReview(review));
+            Assert.That(exception.Message, Is.EqualTo(ReviewServiceErrorMessages.InvalidReview));
         }
 
         [Test]
@@ -61,8 +61,8 @@ namespace imdbdrinks_ratingsmodule.Test
                 Content = "   " // Invalid
             };
 
-            var ex = Assert.Throws<ArgumentException>(() => _service.AddReview(review));
-            Assert.That(ex.Message, Is.EqualTo(ReviewServiceErrorMessages.InvalidReview));
+            var exception = Assert.Throws<ArgumentException>(() => _service.AddReview(review));
+            Assert.That(exception.Message, Is.EqualTo(ReviewServiceErrorMessages.InvalidReview));
         }
     }
 }

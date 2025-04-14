@@ -29,7 +29,7 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var ratings = new List<Rating> { new Rating(), new Rating() };
             var expectedRatingsCount = ratings.Count;
-            _repository.Setup(r => r.GetRatingsByProductId(productId)).Returns(ratings);
+            _repository.Setup(repository => repository.GetRatingsByProductId(productId)).Returns(ratings);
 
             var result = _service.GetRatingsByProduct(productId);
 
@@ -39,7 +39,7 @@ namespace imdbdrinks_ratingsmodule.Test
         [Test]
         public void GetRatingsByProduct_WhenNoRatingsExist_ReturnsEmptyCollection()
         {
-            _repository.Setup(r => r.GetRatingsByProductId(productId)).Returns(new List<Rating>());
+            _repository.Setup(repository => repository.GetRatingsByProductId(productId)).Returns(new List<Rating>());
 
             var result = _service.GetRatingsByProduct(productId);
 

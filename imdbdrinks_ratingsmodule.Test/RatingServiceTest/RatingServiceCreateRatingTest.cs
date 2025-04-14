@@ -27,8 +27,8 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
-                .Returns<Rating>(r => r);
+            _repository.Setup(repository => repository.AddRating(It.IsAny<Rating>()))
+                .Returns<Rating>(rating => rating);
 
             var result = _service.CreateRating(rating);
 
@@ -40,8 +40,8 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
-                .Returns<Rating>(r => r);
+            _repository.Setup(repository => repository.AddRating(It.IsAny<Rating>()))
+                .Returns<Rating>(rating => rating);
 
             var result = _service.CreateRating(rating);
 
@@ -53,12 +53,12 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
-                .Returns<Rating>(r => r);
+            _repository.Setup(repository => repository.AddRating(It.IsAny<Rating>()))
+                .Returns<Rating>(rating => rating);
 
             _service.CreateRating(rating);
 
-            _repository.Verify(r => r.AddRating(It.IsAny<Rating>()), Times.Once);
+            _repository.Verify(repository => repository.AddRating(It.IsAny<Rating>()), Times.Once);
         }
 
         [Test]
@@ -66,9 +66,9 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 7 }; // invalid
 
-            var ex = Assert.Throws<ArgumentException>(() => _service.CreateRating(rating));
+            var exception = Assert.Throws<ArgumentException>(() => _service.CreateRating(rating));
 
-            Assert.That(ex.Message, Is.EqualTo("Invalid rating value."));
+            Assert.That(exception.Message, Is.EqualTo("Invalid rating value."));
         }
     }
 }
