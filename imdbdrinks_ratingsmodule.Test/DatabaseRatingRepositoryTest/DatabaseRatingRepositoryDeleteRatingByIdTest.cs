@@ -22,21 +22,18 @@ public class DatabaseRatingRepositoryDeleteTest
         _repository = new DatabaseRatingRepository(databaseConnection.Object);
     }
 
+    private const int RatingIdToBeDeleted = 3;
+    private const int InitialNumberOfRatings = 3;
+    private const int AfterDeleteNumberOfRatings = InitialNumberOfRatings - 1;
     [Test]
-    public void Delete_ExistingRating_RemovesRatingFromRepository()
+    public void DeleteRatingById_ExistingRating_RemovesRatingFromRepository()
     {
-        // Arrange
-        var allRatings = _repository.FindAll();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(3));
 
-        // Act
-        _repository.Delete(1);
+        _repository.DeleteRatingById(RatingIdToBeDeleted);
 
-        // Assert
-        allRatings = _repository.FindAll();
-        Assert.That(allRatings, Is.Not.Null);
-        Assert.That(allRatings.Count, Is.EqualTo(2));
+        var allRatings = _repository.GetAllRatings();
+
+        Assert.That(allRatings.Count, Is.EqualTo(AfterDeleteNumberOfRatings));
     }
 
 }
