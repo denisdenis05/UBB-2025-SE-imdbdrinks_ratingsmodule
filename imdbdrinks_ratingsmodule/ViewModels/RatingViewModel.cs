@@ -2,61 +2,100 @@
 
 using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
+using imdbdrinks_ratingsmodule.Assets;
 
-public class RatingViewModel : ViewModelBase
+public class RatingViewModel
 {
-
     private readonly RatingService ratingService;
     private ObservableCollection<Rating> ratings;
     private Rating selectedRating;
     private double averageRating;
+    private ObservableCollection<Bottle> bottles;
+    private int ratingScore;
 
     public ObservableCollection<Rating> Ratings
     {
         get => ratings;
-        set
-        {
-            if (ratings != value)
-            {
-                SetProperty(ref ratings, value);
-            }
-        }
+        set => ratings = value;
     }
 
     public Rating SelectedRating
     {
         get => selectedRating;
-        set
-        {
-            if (selectedRating != value)
-            {
-                SetProperty(ref selectedRating, value);
-            }
-        }
+        set => selectedRating = value;
     }
 
     public double AverageRating
     {
         get => averageRating;
-        set
-        {
-            double roundedValue = Math.Round(value, 2);
-            if (averageRating != roundedValue)
-            {
-                SetProperty(ref averageRating, value);
-            }
-        }
+        set => averageRating = Math.Round(value, 2);
     }
+
+    public ObservableCollection<Bottle> Bottles
+    {
+        get => bottles;
+        set => bottles = value;
+    }
+
+    public int RatingScore
+    {
+        get => ratingScore;
+        set => ratingScore = value;
+    }
+
+    private const int MinimumRatingScore = 1;
+    private const int MaximumRatingScore = 5;
+    private const int BottleRatingToIndexOffset = 1;
+    private const int RatingsCountToUserOffset = 1;
+    private const int PlaceholderItemId = 100;
 
     public RatingViewModel(RatingService ratingService)
     {
         this.ratingService = ratingService;
         Ratings = new ObservableCollection<Rating>();
+        InitializeBottles();
+    }
+
+    private void InitializeBottles()
+    {
+        Bottles = new ObservableCollection<Bottle>();
+        foreach (var currentRating in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
+        {
+            var bottleToAdd = new Bottle { ImageSource = AssetConstants.EmptyBottlePath };
+            Bottles.Add(bottleToAdd);
+        }
+    }
+
+    public void UpdateBottleRating(int clickedBottleNumber)
+    {
+        foreach (var currentRatingBottle in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
+        {
+            var bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
+            Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber 
+                ? AssetConstants.FilledBottlePath 
+                : AssetConstants.EmptyBottlePath;
+        }
+
+        RatingScore = clickedBottleNumber;
+    }
+
+    public void AddRating()
+    {
+        if (RatingScore < MinimumRatingScore)
+            return;
+
+        Rating rating = new Rating
+        {
+            ProductId = PlaceholderItemId,
+            RatingValue = RatingScore,
+            UserId = GetUserId()
+        };
+
+        ratingService.CreateRating(rating);
+        LoadRatingsForProduct(rating.ProductId);
     }
 
     public void LoadRatingsForProduct(long productId)
@@ -73,24 +112,8 @@ public class RatingViewModel : ViewModelBase
         AverageRating = ratingService.GetAverageRating(productId);
     }
 
-    public void AddRating(int productId, int ratingValue)
-    {
-        Rating rating = new Rating
-        {
-            ProductId = productId,
-            RatingValue = ratingValue,
-            UserId = GetUserId()
-        };
-
-        ratingService.CreateRating(rating);
-
-        LoadRatingsForProduct(rating.ProductId);
-    }
-
     private int GetUserId()
     {
-        const int ratingsNumberToUserOffset = 1;
-
-        return Ratings.Count + ratingsNumberToUserOffset;
+        return Ratings.Count + RatingsCountToUserOffset;
     }
 }
