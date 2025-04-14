@@ -1,4 +1,5 @@
-﻿using imdbdrinks_ratingsmodule.Repositories;
+﻿using imdbdrinks_ratingsmodule.Constants.ErrorMessages;
+using imdbdrinks_ratingsmodule.Repositories;
 using imdbdrinks_ratingsmodule.Test.Helpers;
 using Microsoft.Extensions.Configuration;
 using Moq;
@@ -34,11 +35,10 @@ public class DatabaseRatingRepositoryGetRatingByIdTest
 
     private const int NonExistentRatingId = 100;
     [Test]
-    public void GetRatingById_NonExistingId_ReturnsNull()
+    public void GetRatingById_NonExistingId_ThrowsInvalidOperationException()
     {
-        var rating = _repository.GetRatingById(NonExistentRatingId);
-
-        Assert.That(rating, Is.Null);
+        var exception = Assert.Throws<InvalidOperationException>(() => _repository.GetRatingById(NonExistentRatingId));
+        Assert.That(exception.Message, Is.EqualTo(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderInvalidReader));
     }
 
 }
