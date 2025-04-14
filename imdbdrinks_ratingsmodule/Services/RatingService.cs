@@ -3,42 +3,56 @@ using System.Linq;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Repositories;
 
-namespace imdbdrinks_ratingsmodule.Services
+namespace imdbdrinks_ratingsmodule.Services;
+
+public class RatingService
 {
-    public class RatingService
+    private readonly IRatingRepository ratingRepository;
+
+    public RatingService(IRatingRepository ratingRepository)
     {
-        private readonly IRatingRepository _ratingRepository;
+        this.ratingRepository = ratingRepository;
+    }
 
-        public RatingService(IRatingRepository ratingRepository)
+    public Rating GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
+
+    public IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.GetRatingsByProductId(productId);
+
+    public Rating CreateRating(Rating rating)
+    {
+        if (!rating.IsValid())
         {
-            _ratingRepository = ratingRepository;
+            throw new System.ArgumentException("Invalid rating value.");
         }
 
-        public Rating GetRatingById(long ratingId) =>
-            _ratingRepository.FindById(ratingId);
+        rating.RatingDate = System.DateTime.Now;
+        rating.IsActive = true;
 
-        public IEnumerable<Rating> GetRatingsByProduct(long productId) =>
-            _ratingRepository.FindByProductId(productId);
+        return this.ratingRepository.AddRating(rating);
+    }
 
-        public Rating CreateRating(Rating rating)
+    // work in progress
+    public Rating UpdateRating(Rating rating)
+    {
+        if (!rating.IsValid())
         {
-            if (!rating.IsValid())
-                throw new System.ArgumentException("Invalid rating value.");
-
-            rating.RatingDate = System.DateTime.Now;
-            rating.IsActive = true;
-            return _ratingRepository.Save(rating);
+            throw new System.ArgumentException("Invalid rating value.");
         }
 
-        public void DeleteRating(long ratingId) =>
-            _ratingRepository.Delete(ratingId);
+        return this.ratingRepository.UpdateRating(rating);
+    }
 
-        public double GetAverageRating(long productId)
+    public void DeleteRatingById(int ratingId) => this.ratingRepository.DeleteRatingById(ratingId);
+
+    public double GetAverageRating(int productId)
+    {
+        var ratings = this.ratingRepository.GetRatingsByProductId(productId).Where(r => r.IsActive);
+
+        if (!ratings.Any())
         {
-            var ratings = _ratingRepository.FindByProductId(productId).Where(r => r.IsActive);
-            if (!ratings.Any())
-                return 0;
-            return ratings.Average(r => r.RatingValue);
+            return 0;
         }
+
+        return ratings.Average(r => r.RatingValue);
     }
 }
