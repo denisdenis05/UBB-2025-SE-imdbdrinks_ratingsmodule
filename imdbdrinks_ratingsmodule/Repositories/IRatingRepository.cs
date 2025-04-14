@@ -5,18 +5,16 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     public interface IRatingRepository
     {
-        Rating FindById(int ratingId);
+        Rating GetRatingById(int ratingId);
 
-        IEnumerable<Rating> FindAll();
+        IEnumerable<Rating> GetAllRatings();
 
-        IEnumerable<Rating> FindByProductId(int productId);
+        IEnumerable<Rating> GetRatingsByProductId(int productId);
 
-        Rating Save(Rating rating);
+        Rating AddRating(Rating rating);
 
-        Rating Add(Rating rating);
+        Rating UpdateRating(Rating rating);
 
-        Rating Update(Rating rating);
-
-        void Delete(int ratingId);
+        void DeleteRatingById(int ratingId);
     }
 }
