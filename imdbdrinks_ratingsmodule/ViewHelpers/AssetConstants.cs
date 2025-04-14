@@ -1,7 +1,22 @@
-﻿namespace imdbdrinks_ratingsmodule.ViewHelpers;
+﻿// <copyright file="AssetConstants.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-public static class AssetConstants
+namespace imdbdrinks_ratingsmodule.ViewHelpers
 {
-    public const string EmptyBottlePath = "ms-appx:///Assets/Bottle.png";
-    public const string FilledBottlePath = "ms-appx:///Assets/FullBottle.png";
+    /// <summary>
+    /// Constants for asset paths used in the application.
+    /// </summary>
+    public static class AssetConstants
+    {
+        /// <summary>
+        /// Path to the empty bottle image.
+        /// </summary>
+        public const string EmptyBottlePath = "ms-appx:///Assets/Bottle.png";
+
+        /// <summary>
+        /// Path to the full bottle image.
+        /// </summary>
+        public const string FilledBottlePath = "ms-appx:///Assets/FullBottle.png";
+    }
 }

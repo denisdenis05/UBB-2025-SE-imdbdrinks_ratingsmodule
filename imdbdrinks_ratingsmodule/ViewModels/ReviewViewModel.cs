@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.ViewModels
+﻿// <copyright file="ReviewViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
@@ -11,38 +15,12 @@
     /// </summary>
     public class ReviewViewModel : ViewModelBase
     {
-        private readonly ReviewService reviewService;
-        private ObservableCollection<Review> reviews;
-        private Review selectedReview;
-        private string reviewContent;
         private const int DefaultUserId = 999;
 
-        /// <summary>
-        /// Gets or sets the collection of reviews.
-        /// </summary>
-        public ObservableCollection<Review> Reviews
-        {
-            get => reviews;
-            set => SetProperty(ref reviews, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the selected review.
-        /// </summary>
-        public Review SelectedReview
-        {
-            get => selectedReview;
-            set => SetProperty(ref selectedReview, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the content of the review.
-        /// </summary>
-        public string ReviewContent
-        {
-            get => reviewContent;
-            set => SetProperty(ref reviewContent, value);
-        }
+        private readonly ReviewService reviewService;
+        private ObservableCollection<Review> reviews;
+        private Review? selectedReview;
+        private string reviewContent = string.Empty;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReviewViewModel"/> class.
@@ -51,7 +29,34 @@
         public ReviewViewModel(ReviewService reviewService)
         {
             this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
-            Reviews = new ObservableCollection<Review>();
+            this.Reviews = new ObservableCollection<Review>();
+        }
+
+        /// <summary>
+        /// Gets or sets the collection of reviews.
+        /// </summary>
+        public ObservableCollection<Review> Reviews
+        {
+            get => this.reviews;
+            set => this.SetProperty(ref this.reviews, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the selected review.
+        /// </summary>
+        public Review? SelectedReview
+        {
+            get => this.selectedReview;
+            set => this.SetProperty(ref this.selectedReview, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the content of the review.
+        /// </summary>
+        public string ReviewContent
+        {
+            get => this.reviewContent;
+            set => this.SetProperty(ref this.reviewContent, value);
         }
 
         /// <summary>
@@ -60,11 +65,11 @@
         /// <param name="ratingId">The ID of the rating whose reviews are to be loaded.</param>
         public void LoadReviewsForRating(int ratingId)
         {
-            var reviewsList = reviewService.GetReviewsByRating(ratingId);
-            Reviews.Clear();
+            var reviewsList = this.reviewService.GetReviewsByRating(ratingId);
+            this.Reviews.Clear();
             foreach (var review in reviewsList)
             {
-                Reviews.Add(review);
+                this.Reviews.Add(review);
             }
         }
 
@@ -74,9 +79,9 @@
         /// <param name="ratingId">The ID of the rating to which the review is to be added.</param>
         public void AddReview(int ratingId)
         {
-            Debug.WriteLine(ReviewContent);
+            Debug.WriteLine(this.ReviewContent);
 
-            if (string.IsNullOrWhiteSpace(ReviewContent))
+            if (string.IsNullOrWhiteSpace(this.ReviewContent))
             {
                 return;
             }
@@ -85,13 +90,13 @@
             {
                 RatingId = ratingId,
                 UserId = DefaultUserId,
-                Content = ReviewContent,
-                IsActive = true
+                Content = this.ReviewContent,
+                IsActive = true,
             };
 
-            reviewService.AddReview(newReview);
-            LoadReviewsForRating(ratingId);
-            ReviewContent = string.Empty;
+            this.reviewService.AddReview(newReview);
+            this.LoadReviewsForRating(ratingId);
+            this.ReviewContent = string.Empty;
         }
 
         /// <summary>
@@ -99,7 +104,7 @@
         /// </summary>
         public void ClearReviewContent()
         {
-            ReviewContent = string.Empty;
+            this.ReviewContent = string.Empty;
         }
     }
 }

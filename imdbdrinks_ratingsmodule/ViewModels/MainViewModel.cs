@@ -1,9 +1,13 @@
-using imdbdrinks_ratingsmodule.Domain;
-using Microsoft.Extensions.Configuration;
-using Microsoft.UI.Xaml.Controls;
+// <copyright file="MainViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace imdbdrinks_ratingsmodule.ViewModels
 {
+    using imdbdrinks_ratingsmodule.Domain;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.UI.Xaml.Controls;
+
     /// <summary>
     /// Represents the main view model for managing ratings and reviews.
     /// </summary>
@@ -12,34 +16,6 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         private readonly IConfiguration configuration;
         private RatingViewModel ratingViewModel;
         private ReviewViewModel reviewViewModel;
-
-        /// <summary>
-        /// Gets the configuration settings.
-        /// </summary>
-        public IConfiguration Configuration => configuration;
-
-        /// <summary>
-        /// Gets or sets the rating view model.
-        /// </summary>
-        public RatingViewModel RatingViewModel
-        {
-            get => ratingViewModel;
-            set => SetProperty(ref ratingViewModel, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the review view model.
-        /// </summary>
-        public ReviewViewModel ReviewViewModel
-        {
-            get => reviewViewModel;
-            set => SetProperty(ref reviewViewModel, value);
-        }
-
-        /// <summary>
-        /// Gets the selected rating.
-        /// </summary>
-        public Rating SelectedRating => ratingViewModel.SelectedRating;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainViewModel"/> class.
@@ -56,17 +32,36 @@ namespace imdbdrinks_ratingsmodule.ViewModels
             this.ratingViewModel = ratingViewModel;
             this.reviewViewModel = reviewViewModel;
 
-            InitializeData();
+            this.InitializeData();
         }
 
         /// <summary>
-        /// Initializes the data by loading ratings for the default product.
+        /// Gets the configuration settings.
         /// </summary>
-        private void InitializeData()
+        public IConfiguration Configuration => this.configuration;
+
+        /// <summary>
+        /// Gets or sets the rating view model.
+        /// </summary>
+        public RatingViewModel RatingViewModel
         {
-            const int defaultProductId = 100;
-            ratingViewModel.LoadRatingsForProduct(defaultProductId);
+            get => this.ratingViewModel;
+            set => this.SetProperty(ref this.ratingViewModel, value);
         }
+
+        /// <summary>
+        /// Gets or sets the review view model.
+        /// </summary>
+        public ReviewViewModel ReviewViewModel
+        {
+            get => this.reviewViewModel;
+            set => this.SetProperty(ref this.reviewViewModel, value);
+        }
+
+        /// <summary>
+        /// Gets the selected rating.
+        /// </summary>
+        public Rating? SelectedRating => this.ratingViewModel.SelectedRating;
 
         /// <summary>
         /// Handles the rating selection change event.
@@ -76,9 +71,9 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         {
             if (listView?.SelectedIndex >= 0)
             {
-                var selectedRating = ratingViewModel.Ratings[listView.SelectedIndex];
-                ratingViewModel.SelectedRating = selectedRating;
-                reviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
+                var selectedRating = this.ratingViewModel.Ratings[listView.SelectedIndex];
+                this.ratingViewModel.SelectedRating = selectedRating;
+                this.reviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
             }
         }
 
@@ -87,7 +82,16 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// </summary>
         public void ClearSelectedRating()
         {
-            ratingViewModel.SelectedRating = null;
+            this.ratingViewModel.SelectedRating = null!;
+        }
+
+        /// <summary>
+        /// Initializes the data by loading ratings for the default product.
+        /// </summary>
+        private void InitializeData()
+        {
+            const int defaultProductId = 100;
+            this.ratingViewModel.LoadRatingsForProduct(defaultProductId);
         }
     }
 }

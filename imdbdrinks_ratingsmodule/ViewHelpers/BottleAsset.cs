@@ -1,20 +1,37 @@
-﻿using System.ComponentModel;
+﻿// <copyright file="BottleAsset.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace imdbdrinks_ratingsmodule.ViewHelpers;
-
-public class BottleAsset : INotifyPropertyChanged
+namespace imdbdrinks_ratingsmodule.ViewHelpers
 {
-    private string bottleImageSource;
+    using System.ComponentModel;
 
-    public string ImageSource
+    /// <summary>
+    /// Represents a bottle asset with an image source. Used for binding in XAML.
+    /// </summary>
+    public class BottleAsset : INotifyPropertyChanged
     {
-        get => bottleImageSource;
-        set
+        /// <summary>
+        /// The image source of the bottle asset.
+        /// </summary>
+        private string bottleImageSource = AssetConstants.EmptyBottlePath;
+
+        /// <summary>
+        /// Implements the interface and is used for binding.
+        /// </summary>
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets the image source for the bottle asset.
+        /// </summary>
+        public string ImageSource
         {
-            bottleImageSource = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ImageSource)));
+            get => this.bottleImageSource;
+            set
+            {
+                this.bottleImageSource = value;
+                this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(this.ImageSource)));
+            }
         }
     }
-
-    public event PropertyChangedEventHandler PropertyChanged;
 }

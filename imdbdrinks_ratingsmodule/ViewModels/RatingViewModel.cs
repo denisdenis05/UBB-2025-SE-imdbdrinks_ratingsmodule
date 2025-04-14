@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.ViewModels
+﻿// <copyright file="RatingViewModel.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.ViewModels
 {
     using System;
     using System.Collections.ObjectModel;
@@ -13,61 +17,16 @@
     /// </summary>
     public class RatingViewModel : ViewModelBase
     {
-        private readonly RatingService ratingService;
-        private ObservableCollection<Rating> ratings;
-        private Rating selectedRating;
-        private double averageRating;
-        private ObservableCollection<BottleAsset> bottles;
-        private int ratingScore;
-
-        /// <summary>
-        /// Gets or sets the collection of ratings.
-        /// </summary>
-        public ObservableCollection<Rating> Ratings
-        {
-            get => ratings;
-            set => SetProperty(ref ratings, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the selected rating.
-        /// </summary>
-        public Rating SelectedRating
-        {
-            get => selectedRating;
-            set => SetProperty(ref selectedRating, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the average rating value, rounded to two decimal places.
-        /// </summary>
-        public double AverageRating
-        {
-            get => averageRating;
-            set => SetProperty(ref averageRating, Math.Round(value, 2));
-        }
-
-        /// <summary>
-        /// Gets or sets the collection of bottle assets.
-        /// </summary>
-        public ObservableCollection<BottleAsset> Bottles
-        {
-            get => bottles;
-            set => SetProperty(ref bottles, value);
-        }
-
-        /// <summary>
-        /// Gets or sets the rating score.
-        /// </summary>
-        public int RatingScore
-        {
-            get => ratingScore;
-            set => SetProperty(ref ratingScore, value);
-        }
-
         private const int BottleRatingToIndexOffset = 1;
         private const int RatingsCountToUserOffset = 1;
         private const int PlaceholderItemId = 100;
+
+        private readonly RatingService ratingService;
+        private ObservableCollection<Rating> ratings;
+        private Rating? selectedRating;
+        private double averageRating;
+        private ObservableCollection<BottleAsset> bottles;
+        private int ratingScore;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RatingViewModel"/> class.
@@ -76,18 +35,54 @@
         public RatingViewModel(RatingService ratingService)
         {
             this.ratingService = ratingService ?? throw new ArgumentNullException(nameof(ratingService));
-            Ratings = new ObservableCollection<Rating>();
-            InitializeBottles();
+            this.Ratings = new ObservableCollection<Rating>();
+            this.Bottles = new ObservableCollection<BottleAsset>();
+            this.InitializeBottles();
         }
 
-        private void InitializeBottles()
+        /// <summary>
+        /// Gets or sets the collection of ratings.
+        /// </summary>
+        public ObservableCollection<Rating> Ratings
         {
-            Bottles = new ObservableCollection<BottleAsset>();
-            for (int i = RatingDomainConstants.MinRatingValue; i <= RatingDomainConstants.MaxRatingValue; i++)
-            {
-                var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
-                Bottles.Add(bottleToAdd);
-            }
+            get => this.ratings;
+            set => this.SetProperty(ref this.ratings, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the selected rating.
+        /// </summary>
+        public Rating? SelectedRating
+        {
+            get => this.selectedRating;
+            set => this.SetProperty(ref this.selectedRating, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the average rating value, rounded to two decimal places.
+        /// </summary>
+        public double AverageRating
+        {
+            get => this.averageRating;
+            set => this.SetProperty(ref this.averageRating, Math.Round(value, 2));
+        }
+
+        /// <summary>
+        /// Gets or sets the collection of bottle assets.
+        /// </summary>
+        public ObservableCollection<BottleAsset> Bottles
+        {
+            get => this.bottles;
+            set => this.SetProperty(ref this.bottles, value);
+        }
+
+        /// <summary>
+        /// Gets or sets the rating score.
+        /// </summary>
+        public int RatingScore
+        {
+            get => this.ratingScore;
+            set => this.SetProperty(ref this.ratingScore, value);
         }
 
         /// <summary>
@@ -99,12 +94,12 @@
             for (int i = RatingDomainConstants.MinRatingValue; i <= RatingDomainConstants.MaxRatingValue; i++)
             {
                 int bottleIndex = i - BottleRatingToIndexOffset;
-                Bottles[bottleIndex].ImageSource = i <= clickedBottleNumber
+                this.Bottles[bottleIndex].ImageSource = i <= clickedBottleNumber
                     ? AssetConstants.FilledBottlePath
                     : AssetConstants.EmptyBottlePath;
             }
 
-            RatingScore = clickedBottleNumber;
+            this.RatingScore = clickedBottleNumber;
         }
 
         /// <summary>
@@ -112,7 +107,7 @@
         /// </summary>
         public void AddRating()
         {
-            if (RatingScore < RatingDomainConstants.MinRatingValue)
+            if (this.RatingScore < RatingDomainConstants.MinRatingValue)
             {
                 return;
             }
@@ -120,12 +115,12 @@
             var rating = new Rating
             {
                 ProductId = PlaceholderItemId,
-                RatingValue = RatingScore,
-                UserId = GetUserId()
+                RatingValue = this.RatingScore,
+                UserId = this.GetUserId(),
             };
 
-            ratingService.CreateRating(rating);
-            LoadRatingsForProduct(rating.ProductId);
+            this.ratingService.CreateRating(rating);
+            this.LoadRatingsForProduct(rating.ProductId);
         }
 
         /// <summary>
@@ -134,21 +129,31 @@
         /// <param name="productId">The ID of the product whose ratings are to be loaded.</param>
         public void LoadRatingsForProduct(int productId)
         {
-            var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
+            var ratingsForProduct = this.ratingService.GetRatingsByProduct(productId);
             var ratingsOrderedByNewest = ratingsForProduct.Reverse();
 
-            Ratings.Clear();
+            this.Ratings.Clear();
             foreach (var rating in ratingsOrderedByNewest)
             {
-                Ratings.Add(rating);
+                this.Ratings.Add(rating);
             }
 
-            AverageRating = ratingService.GetAverageRating(productId);
+            this.AverageRating = this.ratingService.GetAverageRating(productId);
+        }
+
+        private void InitializeBottles()
+        {
+            this.Bottles = new ObservableCollection<BottleAsset>();
+            for (int i = RatingDomainConstants.MinRatingValue; i <= RatingDomainConstants.MaxRatingValue; i++)
+            {
+                var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
+                this.Bottles.Add(bottleToAdd);
+            }
         }
 
         private int GetUserId()
         {
-            return Ratings.Count + RatingsCountToUserOffset;
+            return this.ratings.Count + RatingsCountToUserOffset;
         }
     }
 }
