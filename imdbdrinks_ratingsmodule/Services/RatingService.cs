@@ -14,11 +14,11 @@ public class RatingService
         this.ratingRepository = ratingRepository;
     }
 
-    public Rating GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
+    public virtual Rating GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
 
-    public IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.GetRatingsByProductId(productId);
+    public virtual IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.GetRatingsByProductId(productId);
 
-    public Rating CreateRating(Rating rating)
+    public virtual Rating CreateRating(Rating rating)
     {
         if (!rating.IsValid())
         {
@@ -32,7 +32,7 @@ public class RatingService
     }
 
     // work in progress
-    public Rating UpdateRating(Rating rating)
+    public virtual Rating UpdateRating(Rating rating)
     {
         if (!rating.IsValid())
         {
@@ -42,9 +42,9 @@ public class RatingService
         return this.ratingRepository.UpdateRating(rating);
     }
 
-    public void DeleteRatingById(int ratingId) => this.ratingRepository.DeleteRatingById(ratingId);
+    public virtual void DeleteRatingById(int ratingId) => this.ratingRepository.DeleteRatingById(ratingId);
 
-    public double GetAverageRating(int productId)
+    public virtual double GetAverageRating(int productId)
     {
         var ratings = this.ratingRepository.GetRatingsByProductId(productId).Where(r => r.IsActive);
 
