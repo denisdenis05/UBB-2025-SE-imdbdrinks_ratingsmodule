@@ -23,18 +23,20 @@ public class DatabaseRatingRepositoryDeleteTest
     }
 
     [Test]
-    public void TestDatabaseRatingRepository_Delete()
+    public void Delete_ExistingRating_RemovesRatingFromRepository()
     {
+        // Arrange
         var allRatings = _repository.FindAll();
-
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(3));
 
+        // Act
         _repository.Delete(1);
 
+        // Assert
         allRatings = _repository.FindAll();
-
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(2));
     }
+
 }

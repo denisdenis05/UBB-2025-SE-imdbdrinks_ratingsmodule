@@ -24,14 +24,11 @@ public class DatabaseRatingRepositoryFindAllTest
     }
 
     [Test]
-    public void TestDatabaseRatingRepository_FindAll()
+    public void FindAll_WhenCalled_ReturnsAllExistingRatings()
     {
         var allRatings = _repository.FindAll();
 
         Assert.That(allRatings, Is.Not.Null);
-
-        Assert.That(allRatings, Is.Not.Empty);
-
         Assert.That(allRatings.Count, Is.EqualTo(3));
     }
 

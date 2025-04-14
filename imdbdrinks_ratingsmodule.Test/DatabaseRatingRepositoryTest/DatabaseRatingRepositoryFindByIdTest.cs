@@ -22,11 +22,13 @@ public class DatabaseRatingRepositoryFindByIdTest
         _repository = new DatabaseRatingRepository(databaseConnection.Object);
     }
 
+
+    private const int EXISTENT_RATING_ID = 1;
     [Test]
-    public void TestDatabaseRatingRepository_FindById()
+    public void FindById_ExistingId_ReturnsCorrectRating()
     {
         // "VALUE (101, 1, 4, '2025-04-01 10:30:00', 1)
-        var rating = _repository.FindById(1);
+        var rating = _repository.FindById(EXISTENT_RATING_ID);
         Assert.That(rating, Is.Not.Null);
         Assert.That(rating.ProductId, Is.EqualTo(101));
         Assert.That(rating.RatingValue, Is.EqualTo(4));
@@ -34,9 +36,12 @@ public class DatabaseRatingRepositoryFindByIdTest
         Assert.That(rating.IsActive, Is.EqualTo(true));
     }
 
-    public void TestDatabaseRatingRepository_FindById_NotFound()
+    private const int NON_EXISTENT_RATING_ID = 100;
+    [Test]
+    public void FindById_NonExistingId_ReturnsNull()
     {
-        var rating = _repository.FindById(100);
+        var rating = _repository.FindById(NON_EXISTENT_RATING_ID);
         Assert.That(rating, Is.Null);
     }
+
 }

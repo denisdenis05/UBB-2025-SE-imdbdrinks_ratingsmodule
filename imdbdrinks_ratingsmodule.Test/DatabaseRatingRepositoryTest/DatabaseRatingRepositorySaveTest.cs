@@ -47,6 +47,7 @@ public class DatabaseRatingRepositorySaveTest
     }
 
 
+    private const int EXISTENT_RATING_ID = 1;
     [Test]
     public void TestDatabaseRatingRepository_UpdateOnSave()
     {
@@ -55,7 +56,7 @@ public class DatabaseRatingRepositorySaveTest
         Assert.That(allRatings.Count, Is.EqualTo(3));
         var newRating = new Rating
         {
-            RatingId = 1, // Assuming this ID exists in the test database
+            RatingId = EXISTENT_RATING_ID, // Assuming this ID exists in the test database
             UserId = 1,
             ProductId = 101,
             RatingValue = 5,
