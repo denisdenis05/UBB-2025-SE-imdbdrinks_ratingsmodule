@@ -58,5 +58,8 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// </summary>
         /// <param name="reviewId">The unique identifier of the review to delete.</param>
         void DeleteReviewById(int reviewId);
+
+        bool CheckIfReviewWithIdExists(int reviewId);
+
     }
 }

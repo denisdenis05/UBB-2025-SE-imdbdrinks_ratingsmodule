@@ -57,7 +57,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// </summary>
         /// <param name="ratingId">The rating identifier.</param>
         /// <returns>The rating.</returns>
-        public Rating GetRatingById(int ratingId)
+        public Rating? GetRatingById(int ratingId)
         {
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
@@ -65,7 +65,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             using var getRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingByIdCommand(connection, ratingId);
             using var reader = getRatingByIdCommand.ExecuteReader();
 
-            return DatabaseRatingRepositoryHelper.ExhaustSingleRatingReader(reader);
+            return DatabaseRatingRepositoryHelper.ExhaustRatingReader(reader).FirstOrDefault();
         }
 
         /// <summary>

@@ -6,6 +6,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using imdbdrinks_ratingsmodule.Domain;
 
     /// <summary>
@@ -57,7 +58,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// </summary>
         /// <param name="reviewId">The unique identifier of the review to retrieve.</param>
         /// <returns>The review with the specified identifier.</returns>
-        public Review GetReviewById(int reviewId)
+        public Review? GetReviewById(int reviewId)
         {
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
@@ -65,7 +66,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             using var getReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewByIdCommand(connection, reviewId);
             using var reader = getReviewByIdCommand.ExecuteReader();
 
-            return DatabaseReviewRepositoryHelper.ExhaustSingleReviewReader(reader);
+            return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader).FirstOrDefault();
         }
 
         /// <summary>

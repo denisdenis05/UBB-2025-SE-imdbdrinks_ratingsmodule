@@ -141,35 +141,5 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             return ratings;
         }
-
-        /// <summary>
-        /// Reads a single rating from the SQL data reader.
-        /// </summary>
-        /// <param name="reader">The SQL data reader.</param>
-        /// <returns>A single rating object.</returns>
-        public static Rating ExhaustSingleRatingReader(SqlDataReader reader)
-        {
-            if (reader.Read())
-            {
-                var rating = new Rating
-                {
-                    RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                    ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
-                    RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
-                    IsActive = Convert.ToBoolean(reader["IsActive"]),
-                };
-
-                if (reader.Read()) // Check if there's a second one
-                {
-                    throw new InvalidOperationException(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderMultipleRatingsFound);
-                }
-
-                return rating;
-            }
-
-            throw new InvalidOperationException(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderInvalidReader);
-        }
     }
 }
