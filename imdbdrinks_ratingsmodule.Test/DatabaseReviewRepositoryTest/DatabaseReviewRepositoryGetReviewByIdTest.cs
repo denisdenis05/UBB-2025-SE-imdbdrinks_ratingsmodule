@@ -32,11 +32,12 @@ public class DatabaseReviewRepositoryGetReviewByIdTest
         Assert.That(review.ReviewId, Is.EqualTo(ExistentReviewId));
     }
 
-    private const int NonExistentReviewId = 100;
+    private const int NonExistentReviewId = 900;
     [Test]
-    public void GetReviewById_NonExistingId_ThrowsInvalidOperationException()
+    public void GetReviewById_NonExistingId_ReturnsNullValue()
     {
-        var exception = Assert.Throws<InvalidOperationException>(() => _repository.GetReviewById(NonExistentReviewId));
-        Assert.That(exception.Message, Is.EqualTo(ReviewRepositoryErrorMessages.ExhaustSingleReviewReaderInvalidReader));
+        var review = _repository.GetReviewById(NonExistentReviewId);
+
+        Assert.That(review, Is.Null);
     }
 }

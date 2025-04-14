@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
@@ -34,7 +35,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             return DatabaseRatingRepositoryHelper.ExhaustRatingReader(reader);
         }
 
-        public Rating GetRatingById(int ratingId)
+        public Rating? GetRatingById(int ratingId)
         {
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
@@ -42,7 +43,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
             using var getRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingByIdCommand(connection, ratingId);
             using var reader = getRatingByIdCommand.ExecuteReader();
 
-            return DatabaseRatingRepositoryHelper.ExhaustSingleRatingReader(reader);
+            return DatabaseRatingRepositoryHelper.ExhaustRatingReader(reader).FirstOrDefault();
         }
 
         public IEnumerable<Rating> GetRatingsByProductId(int productId)

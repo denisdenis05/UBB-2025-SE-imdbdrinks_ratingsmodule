@@ -33,12 +33,13 @@ public class DatabaseRatingRepositoryGetRatingByIdTest
         Assert.That(rating.RatingId, Is.EqualTo(ExistentRatingId));
     }
 
-    private const int NonExistentRatingId = 100;
+    private const int NonExistentRatingId = 900;
     [Test]
-    public void GetRatingById_NonExistingId_ThrowsInvalidOperationException()
+    public void GetRatingById_NonExistingId_ReturnsNullValue()
     {
-        var exception = Assert.Throws<InvalidOperationException>(() => _repository.GetRatingById(NonExistentRatingId));
-        Assert.That(exception.Message, Is.EqualTo(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderInvalidReader));
+        var rating = _repository.GetRatingById(NonExistentRatingId);
+
+        Assert.That(rating, Is.Null);
     }
 
 }

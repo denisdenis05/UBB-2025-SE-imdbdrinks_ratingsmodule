@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using imdbdrinks_ratingsmodule.Domain;
 
     public class DatabaseReviewRepository(DatabaseConnection databaseConnection) : IReviewRepository
@@ -29,7 +30,7 @@
             return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader);
         }
 
-        public Review GetReviewById(int reviewId)
+        public Review? GetReviewById(int reviewId)
         {
             using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
@@ -38,7 +39,7 @@
 
             using var reader = getReviewByIdCommand.ExecuteReader();
 
-            return DatabaseReviewRepositoryHelper.ExhaustSingleReviewReader(reader);
+            return DatabaseReviewRepositoryHelper.ExhaustReviewReader(reader).FirstOrDefault();
         }
 
         public IEnumerable<Review> GetReviewsByRatingId(int ratingId)

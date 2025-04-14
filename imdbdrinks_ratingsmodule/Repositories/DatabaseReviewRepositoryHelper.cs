@@ -90,30 +90,5 @@
 
             return reviews;
         }
-
-        public static Review ExhaustSingleReviewReader(SqlDataReader reader)
-        {
-            if (reader.Read())
-            {
-                var review = new Review
-                {
-                    ReviewId = reader.GetInt32(reader.GetOrdinal("ReviewId")),
-                    RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    Content = reader.GetString(reader.GetOrdinal("Content")),
-                    CreationDate = reader.GetDateTime(reader.GetOrdinal("CreationDate")),
-                    IsActive = Convert.ToBoolean(reader["IsActive"]),
-                };
-
-                if (reader.Read()) // check if there's a second one
-                {
-                    throw new InvalidOperationException(ReviewRepositoryErrorMessages.ExhaustSingleReviewReaderMultipleReviewsFound);
-                }
-
-                return review;
-            }
-
-            throw new InvalidOperationException(ReviewRepositoryErrorMessages.ExhaustSingleReviewReaderInvalidReader);
-        }
     }
 }
