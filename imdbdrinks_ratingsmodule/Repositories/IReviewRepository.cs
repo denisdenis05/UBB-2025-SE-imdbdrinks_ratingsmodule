@@ -19,5 +19,7 @@
 
         void DeleteReviewById(int reviewId);
 
+        bool CheckIfReviewWithIdExists(int reviewId);
+
     }
 }
