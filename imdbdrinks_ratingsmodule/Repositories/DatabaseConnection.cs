@@ -1,12 +1,13 @@
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
     /// <summary>
     /// Provides methods to establish a connection to the database.
     /// </summary>
-    public class DatabaseConnection
+    public class DatabaseConnection : IDatabaseConnection
     {
         private readonly string _connectionString;
 
