@@ -1,11 +1,15 @@
+// <copyright file="RatingWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace imdbdrinks_ratingsmodule
 {
-    using Microsoft.UI.Xaml;
-    using Microsoft.UI.Xaml.Controls;
-    using Microsoft.UI.Xaml.Input;
     using imdbdrinks_ratingsmodule.Domain;
     using imdbdrinks_ratingsmodule.ViewHelpers;
     using imdbdrinks_ratingsmodule.ViewModels;
+    using Microsoft.UI.Xaml;
+    using Microsoft.UI.Xaml.Controls;
+    using Microsoft.UI.Xaml.Input;
 
     /// <summary>
     /// Represents the window used to create or edit a rating.

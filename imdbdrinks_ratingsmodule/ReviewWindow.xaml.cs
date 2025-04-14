@@ -1,3 +1,7 @@
+// <copyright file="ReviewWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace imdbdrinks_ratingsmodule
 {
     using System;
@@ -39,7 +43,7 @@ namespace imdbdrinks_ratingsmodule
         {
             if (string.IsNullOrWhiteSpace(this.reviewViewModel.ReviewContent))
             {
-                await EmptyReviewDialog.ShowAsync();
+                await this.EmptyReviewDialog.ShowAsync();
                 return;
             }
 

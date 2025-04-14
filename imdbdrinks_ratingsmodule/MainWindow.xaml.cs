@@ -1,3 +1,7 @@
+// <copyright file="MainWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace imdbdrinks_ratingsmodule
 {
     using System;
@@ -30,17 +34,17 @@ namespace imdbdrinks_ratingsmodule
         /// <param name="e">The event arguments.</param>
         private async void AddReview_Click(object sender, RoutedEventArgs e)
         {
-            if (viewModel.SelectedRating != null)
+            if (this.viewModel.SelectedRating != null)
             {
                 var reviewWindow = new ReviewWindow(
-                    viewModel.Configuration,
-                    viewModel.RatingViewModel,
-                    viewModel.ReviewViewModel);
+                    this.viewModel.Configuration,
+                    this.viewModel.RatingViewModel,
+                    this.viewModel.ReviewViewModel);
                 reviewWindow.Activate();
             }
             else
             {
-                await NoRatingSelectedDialog.ShowAsync();
+                await this.NoRatingSelectedDialog.ShowAsync();
             }
         }
 
@@ -51,8 +55,8 @@ namespace imdbdrinks_ratingsmodule
         /// <param name="e">The event arguments.</param>
         private void AddRating_Click(object sender, RoutedEventArgs e)
         {
-            viewModel.ClearSelectedRating();
-            var ratingWindow = new RatingWindow(viewModel.RatingViewModel);
+            this.viewModel.ClearSelectedRating();
+            var ratingWindow = new RatingWindow(this.viewModel.RatingViewModel);
             ratingWindow.Activate();
         }
 
@@ -60,12 +64,12 @@ namespace imdbdrinks_ratingsmodule
         /// Handles the rating selection changed event.
         /// </summary>
         /// <param name="sender">The sender object.</param>
-        /// <param name="eventArguments>The event arguments.</param>
+        /// <param name="eventArguments">The event arguments.</param>
         private void RatingSelection_Changed(object sender, RoutedEventArgs eventArguments)
         {
             if (sender is ListView listView)
             {
-                viewModel.HandleRatingSelection(listView);
+                this.viewModel.HandleRatingSelection(listView);
             }
         }
     }
