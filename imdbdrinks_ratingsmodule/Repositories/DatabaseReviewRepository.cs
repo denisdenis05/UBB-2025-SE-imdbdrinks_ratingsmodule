@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.Repositories
+﻿// <copyright file="DatabaseReviewRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -9,7 +13,7 @@
     /// </summary>
     public class DatabaseReviewRepository : IReviewRepository
     {
-        private readonly DatabaseConnection _databaseConnection;
+        private readonly DatabaseConnection databaseConnection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseReviewRepository"/> class.
@@ -17,7 +21,7 @@
         /// <param name="databaseConnection">The database connection to use.</param>
         public DatabaseReviewRepository(DatabaseConnection databaseConnection)
         {
-            _databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
+            this.databaseConnection = databaseConnection ?? throw new ArgumentNullException(nameof(databaseConnection));
         }
 
         /// <summary>
@@ -26,7 +30,7 @@
         /// <param name="reviewId">The unique identifier of the review to delete.</param>
         public void DeleteReviewById(int reviewId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var deleteReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateDeleteReviewById(connection, reviewId);
@@ -39,7 +43,7 @@
         /// <returns>A collection of all reviews.</returns>
         public IEnumerable<Review> GetAllReviews()
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getAllReviewsCommand = DatabaseReviewRepositoryHelper.CreateGetAllReviewsCommand(connection);
@@ -55,7 +59,7 @@
         /// <returns>The review with the specified identifier.</returns>
         public Review GetReviewById(int reviewId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getReviewByIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewByIdCommand(connection, reviewId);
@@ -71,7 +75,7 @@
         /// <returns>A collection of reviews associated with the specified rating identifier.</returns>
         public IEnumerable<Review> GetReviewsByRatingId(int ratingId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getReviewsByRatingIdCommand = DatabaseReviewRepositoryHelper.CreateGetReviewsByRatingIdCommand(connection, ratingId);
@@ -87,7 +91,7 @@
         /// <returns><c>true</c> if the review exists; otherwise, <c>false</c>.</returns>
         public bool CheckIfReviewWithIdExists(int reviewId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var checkIfReviewWithIdExistsCommand = DatabaseReviewRepositoryHelper.CreateCheckIfReviewWithIdExistsCommand(connection, reviewId);
@@ -103,7 +107,7 @@
         /// <returns>The unique identifier of the newly added review.</returns>
         public int AddReview(Review review)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var addCommand = DatabaseReviewRepositoryHelper.CreateAddReviewCommand(connection, review);
@@ -117,7 +121,7 @@
         /// <returns>The updated review.</returns>
         public Review UpdateReview(Review review)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var updateCommand = DatabaseReviewRepositoryHelper.CreateUpdateReviewCommand(connection, review);
@@ -133,14 +137,14 @@
         /// <returns>The added or updated review.</returns>
         public Review AddOrUpdateReview(Review review)
         {
-            var reviewExists = CheckIfReviewWithIdExists(review.ReviewId);
+            var reviewExists = this.CheckIfReviewWithIdExists(review.ReviewId);
             if (reviewExists)
             {
-                UpdateReview(review);
+                this.UpdateReview(review);
             }
             else
             {
-                review.ReviewId = AddReview(review);
+                review.ReviewId = this.AddReview(review);
             }
 
             return review;

@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.Repositories
+﻿// <copyright file="DatabaseReviewRepositoryHelper.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System;
     using System.Collections.Generic;
@@ -42,7 +46,7 @@
             updateCommand.Parameters.AddWithValue("@ReviewId", review.ReviewId);
             updateCommand.Parameters.AddWithValue("@RatingId", review.RatingId);
             updateCommand.Parameters.AddWithValue("@UserId", review.UserId);
-            updateCommand.Parameters.AddWithValue("@Content", review.Content); 
+            updateCommand.Parameters.AddWithValue("@Content", review.Content);
             updateCommand.Parameters.AddWithValue("@CreationDate", review.CreationDate);
             updateCommand.Parameters.AddWithValue("@IsActive", review.IsActive);
 

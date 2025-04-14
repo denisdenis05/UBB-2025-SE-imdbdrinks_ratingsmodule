@@ -1,16 +1,19 @@
-﻿using imdbdrinks_ratingsmodule.Domain;
-using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
+﻿// <copyright file="DatabaseRatingRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
+    using System;
+    using System.Collections.Generic;
+    using imdbdrinks_ratingsmodule.Domain;
+
     /// <summary>
     /// Repository class for handling operations related to ratings in the database.
     /// </summary>
     public class DatabaseRatingRepository : IRatingRepository
     {
-        private readonly DatabaseConnection _databaseConnection;
+        private readonly DatabaseConnection databaseConnection;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatabaseRatingRepository"/> class.
@@ -18,7 +21,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <param name="databaseConnection">The database connection.</param>
         public DatabaseRatingRepository(DatabaseConnection databaseConnection)
         {
-            _databaseConnection = databaseConnection;
+            this.databaseConnection = databaseConnection;
         }
 
         /// <summary>
@@ -27,7 +30,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <param name="ratingId">The rating identifier.</param>
         public void DeleteRatingById(int ratingId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var deleteRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateDeleteRatingById(connection, ratingId);
@@ -40,7 +43,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>A collection of ratings.</returns>
         public IEnumerable<Rating> GetAllRatings()
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getAllRatingsCommand = DatabaseRatingRepositoryHelper.CreateGetAllRatingsCommand(connection);
@@ -56,7 +59,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>The rating.</returns>
         public Rating GetRatingById(int ratingId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getRatingByIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingByIdCommand(connection, ratingId);
@@ -72,7 +75,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>A collection of ratings.</returns>
         public IEnumerable<Rating> GetRatingsByProductId(int productId)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var getRatingsByProductIdCommand = DatabaseRatingRepositoryHelper.CreateGetRatingsByProductIdCommand(connection, productId);
@@ -88,7 +91,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>The added rating with its generated identifier.</returns>
         public Rating AddRating(Rating rating)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var addCommand = DatabaseRatingRepositoryHelper.CreateAddRatingCommand(connection, rating);
@@ -104,7 +107,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>The updated rating.</returns>
         public Rating UpdateRating(Rating rating)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var updateCommand = DatabaseRatingRepositoryHelper.CreateUpdateRatingCommand(connection, rating);
@@ -120,7 +123,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <returns>The added or updated rating.</returns>
         public Rating AddOrUpdateRating(Rating rating)
         {
-            using var connection = _databaseConnection.CreateConnection();
+            using var connection = this.databaseConnection.CreateConnection();
             connection.Open();
 
             using var checkIfExistsCommand = DatabaseRatingRepositoryHelper.CreateCheckIfRatingWithIdExistsCommand(connection, rating.RatingId);
@@ -128,10 +131,10 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             if (existsRating)
             {
-                return UpdateRating(rating);
+                return this.UpdateRating(rating);
             }
 
-            return AddRating(rating);
+            return this.AddRating(rating);
         }
     }
 }

@@ -1,3 +1,7 @@
+// <copyright file="RatingQueries.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
 namespace imdbdrinks_ratingsmodule.Queries
 {
     /// <summary>

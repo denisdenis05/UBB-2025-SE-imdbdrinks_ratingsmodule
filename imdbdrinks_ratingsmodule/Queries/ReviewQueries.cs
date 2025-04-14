@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.Queries
+﻿// <copyright file="ReviewQueries.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.Queries
 {
     /// <summary>
     /// Contains SQL queries related to review operations.

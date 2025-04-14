@@ -1,8 +1,12 @@
-﻿using System.Collections.Generic;
-using imdbdrinks_ratingsmodule.Domain;
+﻿// <copyright file="IRatingRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace imdbdrinks_ratingsmodule.Repositories
 {
+    using System.Collections.Generic;
+    using imdbdrinks_ratingsmodule.Domain;
+
     /// <summary>
     /// Defines methods for managing rating entities in the data store.
     /// </summary>

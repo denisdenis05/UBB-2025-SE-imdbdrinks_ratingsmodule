@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.Domain
+﻿// <copyright file="Review.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.Domain
 {
     using System;
 

@@ -1,4 +1,8 @@
-﻿namespace imdbdrinks_ratingsmodule.Repositories
+﻿// <copyright file="IReviewRepository.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+
+namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System.Collections.Generic;
     using imdbdrinks_ratingsmodule.Domain;
