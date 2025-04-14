@@ -3,7 +3,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using imdbdrinks_ratingsmodule.Constants;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
 using imdbdrinks_ratingsmodule.ViewHelpers;
@@ -47,6 +46,8 @@ public class RatingViewModel: ViewModelBase
         set => ratingScore = value;
     }
 
+    private const int MinimumRatingScore = 1;
+    private const int MaximumRatingScore = 5;
     private const int BottleRatingToIndexOffset = 1;
     private const int RatingsCountToUserOffset = 1;
     private const int PlaceholderItemId = 100;
@@ -61,7 +62,7 @@ public class RatingViewModel: ViewModelBase
     private void InitializeBottles()
     {
         Bottles = new ObservableCollection<BottleAsset>();
-        foreach (var currentRating in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
+        foreach (var currentRating in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
         {
             var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
             Bottles.Add(bottleToAdd);
@@ -70,7 +71,7 @@ public class RatingViewModel: ViewModelBase
 
     public void UpdateBottleRating(int clickedBottleNumber)
     {
-        foreach (var currentRatingBottle in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
+        foreach (var currentRatingBottle in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
         {
             var bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
             Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber 
@@ -83,7 +84,7 @@ public class RatingViewModel: ViewModelBase
 
     public void AddRating()
     {
-        if (RatingScore < RatingDomainConstants.MinRatingValue)
+        if (RatingScore < MinimumRatingScore)
             return;
 
         Rating rating = new Rating
@@ -97,22 +98,53 @@ public class RatingViewModel: ViewModelBase
         LoadRatingsForProduct(rating.ProductId);
     }
 
-    public void LoadRatingsForProduct(int productId)
+    public void LoadRatingsForProduct(long productId)
     {
-    var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
-    var ratingsOrderedByNewest = ratingsForProduct.Reverse();
+        var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
+        var ratingsOrderedByNewest = ratingsForProduct.Reverse();
 
-    Ratings.Clear();
-    foreach (var rating in ratingsOrderedByNewest)
-    {
-        Ratings.Add(rating);
+        Ratings.Clear();
+        foreach (var rating in ratingsOrderedByNewest)
+        {
+            Ratings.Add(rating);
+        }
+
+        AverageRating = ratingService.GetAverageRating(productId);
     }
 
-    AverageRating = ratingService.GetAverageRating(productId);
-    }
-
+<<<<<<< HEAD
     private int GetUserId()
     {
         return Ratings.Count + RatingsCountToUserOffset;
+=======
+        public RatingViewModel(RatingService ratingService)
+        {
+            _ratingService = ratingService;
+            Ratings = new ObservableCollection<Rating>();
+        }
+
+        public void LoadRatingsForProduct(int productId)
+        {
+            var ratings = _ratingService.GetRatingsByProduct(productId);
+            Ratings.Clear();
+            // Reverse the order so that the newest rating appears first
+            foreach (var rating in ratings.Reverse())
+            {
+                Ratings.Add(rating);
+            }
+            AverageRating = _ratingService.GetAverageRating(productId);
+        }
+
+        public void AddRating(Rating rating)
+        {
+            _ratingService.CreateRating(rating);
+            // Reload the ratings so that the new one appears at the top
+            LoadRatingsForProduct(rating.ProductId);
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+>>>>>>> da1b8d72d49bcf7ebd98a3d084cabeb1c9febc08
     }
 }
