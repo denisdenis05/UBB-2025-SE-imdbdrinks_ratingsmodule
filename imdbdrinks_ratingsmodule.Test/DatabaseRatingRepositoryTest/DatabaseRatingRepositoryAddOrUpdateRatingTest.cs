@@ -6,7 +6,7 @@ using Moq;
 
 namespace imdbdrinks_ratingsmodule.Test;
 
-public class DatabaseRatingRepositorySaveTest
+public class DatabaseRatingRepositoryAddOrUpdateRatingTest
 {
     private IRatingRepository _repository;
     private TestDatabaseHelper _testDatabaseHelper;
@@ -25,9 +25,9 @@ public class DatabaseRatingRepositorySaveTest
 
 
     [Test]
-    public void TestDatabaseRatingRepository_Save()
+    public void AddOrUpdateRating_NewRating_AddsRatingToRepository()
     {
-        var allRatings = _repository.FindAll();
+        var allRatings = _repository.GetAllRatings();
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(3));
         var newRating = new Rating
@@ -38,8 +38,8 @@ public class DatabaseRatingRepositorySaveTest
             RatingDate = DateTime.Now,
             IsActive = true
         };
-        _repository.Save(newRating);
-        allRatings = _repository.FindAll();
+        _repository.AddOrUpdateRating(newRating);
+        allRatings = _repository.GetAllRatings();
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(4));
         var savedRating = allRatings.FirstOrDefault(r => r.ProductId == 101 && r.RatingValue == 5);
@@ -47,24 +47,24 @@ public class DatabaseRatingRepositorySaveTest
     }
 
 
-    private const int EXISTENT_RATING_ID = 1;
+    private const int ExistentRatingId = 1;
     [Test]
-    public void TestDatabaseRatingRepository_UpdateOnSave()
+    public void AddOrUpdateRating_ExistingRating_UpdatesRatingInRepository()
     {
-        var allRatings = _repository.FindAll();
+        var allRatings = _repository.GetAllRatings();
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(3));
         var newRating = new Rating
         {
-            RatingId = EXISTENT_RATING_ID, // Assuming this ID exists in the test database
+            RatingId = ExistentRatingId, // Assuming this ID exists in the test database
             UserId = 1,
             ProductId = 101,
             RatingValue = 5,
             RatingDate = DateTime.Now,
             IsActive = true
         };
-        _repository.Save(newRating);
-        allRatings = _repository.FindAll();
+        _repository.AddOrUpdateRating(newRating);
+        allRatings = _repository.GetAllRatings();
         Assert.That(allRatings, Is.Not.Null);
         Assert.That(allRatings.Count, Is.EqualTo(3));
         var savedRating = allRatings.FirstOrDefault(r => r.ProductId == 101 && r.RatingValue == 5);

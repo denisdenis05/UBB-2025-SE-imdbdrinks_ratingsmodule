@@ -23,21 +23,21 @@ public class DatabaseRatingRepositoryFindByProductIdTest
         _repository = new DatabaseRatingRepository(databaseConnection);
     }
 
-    private const int NON_EXISTENT_PRODUCT_ID = 0;
+    private const int NonExistentProductId = 0;
     [Test]
-    public void FindByProductId_NonExistingProductId_ReturnsEmptyCollection()
+    public void GetRatingsByProductId_NonExistingProductId_ReturnsEmptyCollection()
     {
-        var productRatings = _repository.FindByProductId(NON_EXISTENT_PRODUCT_ID);
+        var productRatings = _repository.GetRatingsByProductId(NonExistentProductId);
 
         Assert.That(productRatings, Is.Not.Null);
         Assert.That(productRatings, Is.Empty);
     }
 
-    private const int EXISTENT_PRODUCT_ID = 101;
+    private const int ExistentProductId = 101;
     [Test]
-    public void TestDatabaseRatingRepository_FindByProductId()
+    public void GetRatingsByProductId_ExistingProductId_ReturnsCorrectRating()
     {
-        var productRatings = _repository.FindByProductId(EXISTENT_PRODUCT_ID);
+        var productRatings = _repository.GetRatingsByProductId(ExistentProductId);
 
         Assert.That(productRatings, Is.Not.Null);
         Assert.That(productRatings.Count, Is.EqualTo(1));

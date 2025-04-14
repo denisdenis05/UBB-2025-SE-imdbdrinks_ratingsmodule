@@ -5,7 +5,7 @@ using Moq;
 
 namespace imdbdrinks_ratingsmodule.Test;
 
-public class DatabaseRatingRepositoryFindByIdTest
+public class DatabaseRatingRepositoryGetRatingByIdTest
 {
     private IRatingRepository _repository;
     private TestDatabaseHelper _testDatabaseHelper;
@@ -23,12 +23,12 @@ public class DatabaseRatingRepositoryFindByIdTest
     }
 
 
-    private const int EXISTENT_RATING_ID = 1;
+    private const int ExistentRatingId = 1;
     [Test]
-    public void FindById_ExistingId_ReturnsCorrectRating()
+    public void GetRatingById_ExistingId_ReturnsCorrectRating()
     {
         // "VALUE (101, 1, 4, '2025-04-01 10:30:00', 1)
-        var rating = _repository.FindById(EXISTENT_RATING_ID);
+        var rating = _repository.GetRatingById(ExistentRatingId);
         Assert.That(rating, Is.Not.Null);
         Assert.That(rating.ProductId, Is.EqualTo(101));
         Assert.That(rating.RatingValue, Is.EqualTo(4));
@@ -36,11 +36,11 @@ public class DatabaseRatingRepositoryFindByIdTest
         Assert.That(rating.IsActive, Is.EqualTo(true));
     }
 
-    private const int NON_EXISTENT_RATING_ID = 100;
+    private const int NonExistentRatingId = 100;
     [Test]
-    public void FindById_NonExistingId_ReturnsNull()
+    public void GetRatingById_NonExistingId_ReturnsNull()
     {
-        var rating = _repository.FindById(NON_EXISTENT_RATING_ID);
+        var rating = _repository.GetRatingById(NonExistentRatingId);
         Assert.That(rating, Is.Null);
     }
 
