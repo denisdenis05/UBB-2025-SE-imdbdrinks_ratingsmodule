@@ -27,7 +27,7 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.Save(It.IsAny<Rating>()))
+            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
                 .Returns<Rating>(r => r);
 
             var result = _service.CreateRating(rating);
@@ -40,7 +40,7 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.Save(It.IsAny<Rating>()))
+            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
                 .Returns<Rating>(r => r);
 
             var result = _service.CreateRating(rating);
@@ -53,12 +53,12 @@ namespace imdbdrinks_ratingsmodule.Test
         {
             var rating = new Rating { ProductId = 1, UserId = 1, RatingValue = 4 };
 
-            _repository.Setup(r => r.Save(It.IsAny<Rating>()))
+            _repository.Setup(r => r.AddRating(It.IsAny<Rating>()))
                 .Returns<Rating>(r => r);
 
             _service.CreateRating(rating);
 
-            _repository.Verify(r => r.Save(It.IsAny<Rating>()), Times.Once);
+            _repository.Verify(r => r.AddRating(It.IsAny<Rating>()), Times.Once);
         }
 
         [Test]
