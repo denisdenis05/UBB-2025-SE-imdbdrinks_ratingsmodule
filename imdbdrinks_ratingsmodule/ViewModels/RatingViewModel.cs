@@ -35,8 +35,8 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         public RatingViewModel(RatingService ratingService)
         {
             this.ratingService = ratingService ?? throw new ArgumentNullException(nameof(ratingService));
-            this.Ratings = new ObservableCollection<Rating>();
-            this.Bottles = new ObservableCollection<BottleAsset>();
+            this.ratings = new ObservableCollection<Rating>();
+            this.bottles = new ObservableCollection<BottleAsset>();
             this.InitializeBottles();
         }
 

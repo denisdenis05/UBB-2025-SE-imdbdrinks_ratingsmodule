@@ -17,7 +17,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// </summary>
         /// <param name="ratingId">The unique identifier of the rating.</param>
         /// <returns>The <see cref="Rating"/> with the specified identifier.</returns>
-        Rating GetRatingById(int ratingId);
+        Rating? GetRatingById(int ratingId);
 
         /// <summary>
         /// Retrieves all ratings from the data store.

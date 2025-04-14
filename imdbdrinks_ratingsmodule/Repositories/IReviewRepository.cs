@@ -17,7 +17,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// </summary>
         /// <param name="reviewId">The unique identifier of the review.</param>
         /// <returns>The <see cref="Review"/> with the specified identifier.</returns>
-        Review GetReviewById(int reviewId);
+        Review? GetReviewById(int reviewId);
 
         /// <summary>
         /// Retrieves all reviews from the data store.
@@ -59,7 +59,11 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// <param name="reviewId">The unique identifier of the review to delete.</param>
         void DeleteReviewById(int reviewId);
 
+        /// <summary>
+        /// Checks whether a review with the specified identifier exists in the data store.
+        /// </summary>
+        /// <param name="reviewId">The if of the review which will be checked for existance.</param>
+        /// <returns>Boolean value: true if exists, false otherwise.</returns>
         bool CheckIfReviewWithIdExists(int reviewId);
-
     }
 }

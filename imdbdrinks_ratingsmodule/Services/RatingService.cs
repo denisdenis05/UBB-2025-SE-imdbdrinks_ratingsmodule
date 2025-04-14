@@ -30,8 +30,8 @@ namespace imdbdrinks_ratingsmodule.Services
         /// Retrieves a rating by its unique identifier.
         /// </summary>
         /// <param name="ratingId">The rating identifier.</param>
-        /// <returns>The corresponding <see cref="Rating"/>.</returns>
-        public virtual Rating GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
+        /// <returns>The corresponding rating or null if it doesnt exist.<see cref="Rating"/>.</returns>
+        public virtual Rating? GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
 
         /// <summary>
         /// Retrieves all ratings associated with a specific product.
@@ -59,13 +59,6 @@ namespace imdbdrinks_ratingsmodule.Services
             return this.ratingRepository.AddRating(rating);
         }
 
-    // work in progress
-    public virtual Rating UpdateRating(Rating rating)
-    {
-        if (!rating.IsValid())
-        {
-            throw new System.ArgumentException("Invalid rating value.");
-        }
         /// <summary>
         /// Updates an existing rating.
         /// </summary>

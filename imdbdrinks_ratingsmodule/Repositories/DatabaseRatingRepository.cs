@@ -6,6 +6,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using imdbdrinks_ratingsmodule.Domain;
 
     /// <summary>
@@ -56,7 +57,7 @@ namespace imdbdrinks_ratingsmodule.Repositories
         /// Retrieves a rating by its identifier.
         /// </summary>
         /// <param name="ratingId">The rating identifier.</param>
-        /// <returns>The rating.</returns>
+        /// <returns>The rating or null if it does not exist.</returns>
         public Rating? GetRatingById(int ratingId)
         {
             using var connection = this.databaseConnection.CreateConnection();
