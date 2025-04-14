@@ -37,8 +37,8 @@ namespace imdbdrinks_ratingsmodule.Test.Helpers
                 sqlConnecton.Open();
 
                 // Clear all tables
-                ClearTable("Ratings", sqlConnecton);
                 ClearTable("Reviews", sqlConnecton);
+                ClearTable("Ratings", sqlConnecton);
 
 
             }
@@ -86,6 +86,14 @@ namespace imdbdrinks_ratingsmodule.Test.Helpers
                     "(102, 2, 3, '2025-04-02 12:00:00', 1)," +
                     "(103, 3, 5, '2025-04-03 14:15:00', 1);",sqlConnecton);
                 Console.WriteLine($"Inserted {rowsAffected} rows into Ratings table.");
+
+                rowsAffected = ExecuteNonQuery(@"INSERT INTO reviews " +
+                    "(RatingID, UserID, Content, CreationDate, IsActive)" +
+                    "VALUES (1, 1, 'Great product! Really loved it, will buy again.', '2025-04-14 10:30:00', 1)," +
+                    "(2, 2, 'Not bad, but the quality could be improved. Decent value for the price.', '2025-04-13 15:20:00', 1)," +
+                    "(1, 4, 'Fantastic quality, exceeded expectations! Highly recommend.', '2025-04-10 12:45:00', 1);", sqlConnecton);
+                Console.WriteLine($"Inserted {rowsAffected} rows into Reviews table.");
+
             }
             finally
             {
