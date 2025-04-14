@@ -90,30 +90,5 @@ namespace imdbdrinks_ratingsmodule.Repositories
 
             return ratings;
         }
-
-        public static Rating ExhaustSingleRatingReader(SqlDataReader reader)
-        {
-            if (reader.Read())
-            {
-                var rating = new Rating
-                {
-                    RatingId = reader.GetInt32(reader.GetOrdinal("RatingId")),
-                    ProductId = reader.GetInt32(reader.GetOrdinal("ProductId")),
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    RatingValue = reader.GetDouble(reader.GetOrdinal("RatingValue")),
-                    RatingDate = reader.GetDateTime(reader.GetOrdinal("RatingDate")),
-                    IsActive = Convert.ToBoolean(reader["IsActive"]),
-                };
-
-                if (reader.Read()) // check if there's a second one
-                {
-                    throw new InvalidOperationException(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderMultipleRatingsFound);
-                }
-
-                return rating;
-            }
-
-            throw new InvalidOperationException(RatingRepositoryErrorMessages.ExhaustSingleRatingReaderInvalidReader);
-        }
     }
 }
