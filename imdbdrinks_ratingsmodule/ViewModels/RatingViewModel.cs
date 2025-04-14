@@ -5,15 +5,15 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
-using imdbdrinks_ratingsmodule.Assets;
+using imdbdrinks_ratingsmodule.ViewHelpers;
 
-public class RatingViewModel
+public class RatingViewModel: ViewModelBase
 {
     private readonly RatingService ratingService;
     private ObservableCollection<Rating> ratings;
     private Rating selectedRating;
     private double averageRating;
-    private ObservableCollection<Bottle> bottles;
+    private ObservableCollection<BottleAsset> bottles;
     private int ratingScore;
 
     public ObservableCollection<Rating> Ratings
@@ -34,7 +34,7 @@ public class RatingViewModel
         set => averageRating = Math.Round(value, 2);
     }
 
-    public ObservableCollection<Bottle> Bottles
+    public ObservableCollection<BottleAsset> Bottles
     {
         get => bottles;
         set => bottles = value;
@@ -61,10 +61,10 @@ public class RatingViewModel
 
     private void InitializeBottles()
     {
-        Bottles = new ObservableCollection<Bottle>();
+        Bottles = new ObservableCollection<BottleAsset>();
         foreach (var currentRating in Enumerable.Range(MinimumRatingScore, MaximumRatingScore))
         {
-            var bottleToAdd = new Bottle { ImageSource = AssetConstants.EmptyBottlePath };
+            var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
             Bottles.Add(bottleToAdd);
         }
     }

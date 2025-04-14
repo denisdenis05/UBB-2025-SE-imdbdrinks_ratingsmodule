@@ -1,8 +1,8 @@
-namespace imdbdrinks_ratingsmodule.Domain;
+﻿using System.ComponentModel;
 
-using System.ComponentModel;
+namespace imdbdrinks_ratingsmodule.ViewHelpers;
 
-public class Bottle : INotifyPropertyChanged
+public class BottleAsset : INotifyPropertyChanged
 {
     private string bottleImageSource;
 
@@ -17,4 +17,4 @@ public class Bottle : INotifyPropertyChanged
     }
 
     public event PropertyChangedEventHandler PropertyChanged;
-} 
+}

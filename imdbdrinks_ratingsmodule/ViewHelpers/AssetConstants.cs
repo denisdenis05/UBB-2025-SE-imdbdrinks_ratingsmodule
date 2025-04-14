@@ -1,4 +1,4 @@
-﻿namespace imdbdrinks_ratingsmodule.Assets;
+﻿namespace imdbdrinks_ratingsmodule.ViewHelpers;
 
 public static class AssetConstants
 {

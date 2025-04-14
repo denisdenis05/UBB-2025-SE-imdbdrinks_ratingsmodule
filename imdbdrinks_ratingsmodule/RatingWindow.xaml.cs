@@ -5,10 +5,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using imdbdrinks_ratingsmodule.ViewModels;
 using imdbdrinks_ratingsmodule.Domain;
+using imdbdrinks_ratingsmodule.ViewHelpers;
 
 public sealed partial class RatingWindow : Window
 {
     private readonly RatingViewModel ratingViewModel;
+    private const int BottleRatingToIndexOffset = 1;
 
     public RatingWindow(RatingViewModel viewModel)
     {
@@ -22,11 +24,10 @@ public sealed partial class RatingWindow : Window
         if (sender is not Image clickedImage)
             return;
 
-        if (clickedImage.DataContext is not Bottle clickedBottle)
+        if (clickedImage.DataContext is not BottleAsset clickedBottle)
             return;
 
-        const int bottleRatingToIndexOffset = 1;
-        int clickedBottleNumber = ratingViewModel.Bottles.IndexOf(clickedBottle) + bottleRatingToIndexOffset;
+        int clickedBottleNumber = ratingViewModel.Bottles.IndexOf(clickedBottle) + BottleRatingToIndexOffset;
 
         ratingViewModel.UpdateBottleRating(clickedBottleNumber);
     }
