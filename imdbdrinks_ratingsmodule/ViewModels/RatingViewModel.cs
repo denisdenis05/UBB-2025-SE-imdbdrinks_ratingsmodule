@@ -17,31 +17,31 @@ public class RatingViewModel: ViewModelBase
     private ObservableCollection<BottleAsset> bottles;
     private int ratingScore;
 
-    public ObservableCollection<Rating> Ratings
+    public virtual ObservableCollection<Rating> Ratings
     {
         get => ratings;
         set => ratings = value;
     }
 
-    public Rating SelectedRating
+    public virtual Rating SelectedRating
     {
         get => selectedRating;
         set => selectedRating = value;
     }
 
-    public double AverageRating
+    public virtual double AverageRating
     {
         get => averageRating;
         set => averageRating = Math.Round(value, 2);
     }
 
-    public ObservableCollection<BottleAsset> Bottles
+    public virtual ObservableCollection<BottleAsset> Bottles
     {
         get => bottles;
         set => bottles = value;
     }
 
-    public int RatingScore
+    public virtual int RatingScore
     {
         get => ratingScore;
         set => ratingScore = value;
@@ -58,7 +58,7 @@ public class RatingViewModel: ViewModelBase
         InitializeBottles();
     }
 
-    private void InitializeBottles()
+    protected virtual void InitializeBottles()
     {
         Bottles = new ObservableCollection<BottleAsset>();
         foreach (var currentRating in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
@@ -68,7 +68,7 @@ public class RatingViewModel: ViewModelBase
         }
     }
 
-    public void UpdateBottleRating(int clickedBottleNumber)
+    public virtual void UpdateBottleRating(int clickedBottleNumber)
     {
         foreach (var currentRatingBottle in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
         {
@@ -81,7 +81,7 @@ public class RatingViewModel: ViewModelBase
         RatingScore = clickedBottleNumber;
     }
 
-    public void AddRating()
+    public virtual void AddRating()
     {
         if (RatingScore < RatingDomainConstants.MinRatingValue)
             return;
@@ -97,7 +97,7 @@ public class RatingViewModel: ViewModelBase
         LoadRatingsForProduct(rating.ProductId);
     }
 
-    public void LoadRatingsForProduct(int productId)
+    public virtual void LoadRatingsForProduct(int productId)
     {
     var ratingsForProduct = ratingService.GetRatingsByProduct(productId);
     var ratingsOrderedByNewest = ratingsForProduct.Reverse();
@@ -111,7 +111,7 @@ public class RatingViewModel: ViewModelBase
     AverageRating = ratingService.GetAverageRating(productId);
     }
 
-    private int GetUserId()
+    protected virtual int GetUserId()
     {
         return Ratings.Count + RatingsCountToUserOffset;
     }

@@ -13,19 +13,19 @@ public class ReviewViewModel : ViewModelBase
     private string reviewContent;
     private const int defaultUserId = 999;
 
-    public ObservableCollection<Review> Reviews
+    public virtual ObservableCollection<Review> Reviews
     {
         get => reviews;
         set => SetProperty(ref reviews, value);
     }
 
-    public Review SelectedReview
+    public virtual Review SelectedReview
     {
         get => selectedReview;
         set => SetProperty(ref selectedReview, value);
     }
 
-    public string ReviewContent
+    public virtual string ReviewContent
     {
         get => reviewContent;
         set => SetProperty(ref reviewContent, value);
@@ -37,7 +37,7 @@ public class ReviewViewModel : ViewModelBase
         Reviews = new ObservableCollection<Review>();
     }
 
-    public void LoadReviewsForRating(int ratingId)
+    public virtual void LoadReviewsForRating(int ratingId)
     {
         var reviews = reviewService.GetReviewsByRating(ratingId);
         Reviews.Clear();
@@ -47,7 +47,7 @@ public class ReviewViewModel : ViewModelBase
         }
     }
 
-    public void AddReview(int ratingId)
+    public virtual void AddReview(int ratingId)
     {
         Debug.WriteLine(ReviewContent);
 
@@ -69,7 +69,7 @@ public class ReviewViewModel : ViewModelBase
         ReviewContent = string.Empty;
     }
 
-    public void ClearReviewContent()
+    public virtual void ClearReviewContent()
     {
         ReviewContent = string.Empty;
     }
