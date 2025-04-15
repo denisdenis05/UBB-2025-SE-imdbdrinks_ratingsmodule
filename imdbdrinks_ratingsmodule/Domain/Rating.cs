@@ -1,18 +1,51 @@
-﻿using System;
-using imdbdrinks_ratingsmodule.Constants;
+﻿// <copyright file="Rating.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace imdbdrinks_ratingsmodule.Domain
 {
+    using System;
+    using imdbdrinks_ratingsmodule.Constants;
+
+    /// <summary>
+    /// Represents a user's rating for a product.
+    /// </summary>
     public class Rating
     {
+        /// <summary>
+        /// Gets or sets the unique identifier for the rating.
+        /// </summary>
         public int RatingId { get; set; }
+
+        /// <summary>
+        /// Gets or sets the identifier of the associated product.
+        /// </summary>
         public int ProductId { get; set; } // Reference to the product (for future integration)
+
+        /// <summary>
+        /// Gets or sets the identifier of the user who submitted the rating.
+        /// </summary>
         public int UserId { get; set; }
-        public double RatingValue { get; set; } // 1 to 5 stars
+
+        /// <summary>
+        /// Gets or sets the rating value, ranging from 1 to 5 stars.
+        /// </summary>
+        public double RatingValue { get; set; }
+
+        /// <summary>
+        /// Gets or sets the date and time when the rating was submitted.
+        /// </summary>
         public DateTime RatingDate { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the rating is active.
+        /// </summary>
         public bool IsActive { get; set; }
 
-        // Validate the rating is between 1 and 5.
-        public bool IsValid() => RatingValue >= RatingDomainConstants.MinRatingValue && RatingValue <= RatingDomainConstants.MaxRatingValue;
+        /// <summary>
+        /// Validates that the rating value is within the acceptable range (1 to 5).
+        /// </summary>
+        /// <returns>True if the rating value is valid; otherwise, false.</returns>
+        public bool IsValid() => this.RatingValue >= RatingDomainConstants.MinRatingValue && this.RatingValue <= RatingDomainConstants.MaxRatingValue;
     }
 }

@@ -1,58 +1,101 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using imdbdrinks_ratingsmodule.Domain;
-using imdbdrinks_ratingsmodule.Repositories;
+﻿// <copyright file="RatingService.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-namespace imdbdrinks_ratingsmodule.Services;
-
-public class RatingService
+namespace imdbdrinks_ratingsmodule.Services
 {
-    private readonly IRatingRepository ratingRepository;
+    using System.Collections.Generic;
+    using System.Linq;
+    using imdbdrinks_ratingsmodule.Constants.ErrorMessages;
+    using imdbdrinks_ratingsmodule.Domain;
+    using imdbdrinks_ratingsmodule.Repositories;
 
-    public RatingService(IRatingRepository ratingRepository)
+    /// <summary>
+    /// Provides service-level operations for managing ratings.
+    /// </summary>
+    public class RatingService
     {
-        this.ratingRepository = ratingRepository;
-    }
+        private readonly IRatingRepository ratingRepository;
 
-    public virtual Rating GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
-
-    public virtual IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.GetRatingsByProductId(productId);
-
-    public virtual Rating CreateRating(Rating rating)
-    {
-        if (!rating.IsValid())
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RatingService"/> class.
+        /// </summary>
+        /// <param name="ratingRepository">The rating repository dependency.</param>
+        public RatingService(IRatingRepository ratingRepository)
         {
-            throw new System.ArgumentException("Invalid rating value.");
+            this.ratingRepository = ratingRepository;
         }
 
-        rating.RatingDate = System.DateTime.Now;
-        rating.IsActive = true;
+        /// <summary>
+        /// Retrieves a rating by its unique identifier.
+        /// </summary>
+        /// <param name="ratingId">The rating identifier.</param>
+        /// <returns>The corresponding rating or null if it doesnt exist.<see cref="Rating"/>.</returns>
+        public virtual Rating? GetRatingById(int ratingId) => this.ratingRepository.GetRatingById(ratingId);
 
-        return this.ratingRepository.AddRating(rating);
-    }
+        /// <summary>
+        /// Retrieves all ratings associated with a specific product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <returns>A collection of <see cref="Rating"/> instances for the product.</returns>
+        public virtual IEnumerable<Rating> GetRatingsByProduct(int productId) => this.ratingRepository.GetRatingsByProductId(productId);
 
-    // work in progress
-    public virtual Rating UpdateRating(Rating rating)
-    {
-        if (!rating.IsValid())
+        /// <summary>
+        /// Creates a new rating.
+        /// </summary>
+        /// <param name="rating">The rating to create.</param>
+        /// <returns>The created <see cref="Rating"/> instance.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when the rating is invalid.</exception>
+        public virtual Rating CreateRating(Rating rating)
         {
-            throw new System.ArgumentException("Invalid rating value.");
+            if (!rating.IsValid())
+            {
+                throw new System.ArgumentException(RatingServiceErrorMessages.InvalidRatingValue);
+            }
+
+            rating.RatingDate = System.DateTime.Now;
+            rating.IsActive = true;
+
+            return this.ratingRepository.AddRating(rating);
         }
 
-        return this.ratingRepository.UpdateRating(rating);
-    }
-
-    public virtual void DeleteRatingById(int ratingId) => this.ratingRepository.DeleteRatingById(ratingId);
-
-    public virtual double GetAverageRating(int productId)
-    {
-        var ratings = this.ratingRepository.GetRatingsByProductId(productId).Where(r => r.IsActive);
-
-        if (!ratings.Any())
+        /// <summary>
+        /// Updates an existing rating.
+        /// </summary>
+        /// <param name="rating">The rating to update.</param>
+        /// <returns>The updated <see cref="Rating"/> instance.</returns>
+        /// <exception cref="System.ArgumentException">Thrown when the rating is invalid.</exception>
+        public virtual Rating UpdateRating(Rating rating)
         {
-            return 0;
+            if (!rating.IsValid())
+            {
+                throw new System.ArgumentException(RatingServiceErrorMessages.InvalidRatingValue);
+            }
+
+            return this.ratingRepository.UpdateRating(rating);
         }
 
-        return ratings.Average(r => r.RatingValue);
+        /// <summary>
+        /// Deletes a rating by its unique identifier.
+        /// </summary>
+        /// <param name="ratingId">The rating identifier.</param>
+        public virtual void DeleteRatingById(int ratingId) => this.ratingRepository.DeleteRatingById(ratingId);
+
+        /// <summary>
+        /// Calculates the average value of all active ratings for a product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <returns>The average rating value, or 0 if no ratings are present.</returns>
+        public virtual double GetAverageRating(int productId)
+        {
+            var ratings = this.ratingRepository.GetRatingsByProductId(productId).Where(r => r.IsActive);
+
+            if (!ratings.Any())
+            {
+                return 0;
+            }
+
+            return ratings.Average(r => r.RatingValue);
+        }
     }
 }

@@ -1,53 +1,81 @@
-using System;
-using imdbdrinks_ratingsmodule.ViewModels;
-using Microsoft.Extensions.Configuration;
-using Microsoft.UI.Xaml;
+// <copyright file="ReviewWindow.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
-
-namespace imdbdrinks_ratingsmodule;
-/// <summary>
-/// An empty window that can be used on its own or navigated to within a Frame.
-/// </summary>
-public sealed partial class ReviewWindow : Window
+namespace imdbdrinks_ratingsmodule
 {
-    private readonly IConfiguration configuration;
-    private readonly RatingViewModel ratingViewModel;
-    private readonly ReviewViewModel reviewViewModel;
+    using System;
+    using imdbdrinks_ratingsmodule.ViewModels;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.UI.Xaml;
 
-    public ReviewWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
+    /// <summary>
+    /// A window for submitting or generating a review.
+    /// </summary>
+    public sealed partial class ReviewWindow : Window
     {
-        this.configuration = configuration;
-        this.ratingViewModel = ratingViewModel;
-        this.reviewViewModel = reviewViewModel;
+        private readonly IConfiguration configuration;
+        private readonly RatingViewModel ratingViewModel;
+        private readonly ReviewViewModel reviewViewModel;
 
-        this.InitializeComponent();
-        this.rootGrid.DataContext = reviewViewModel;
-        this.reviewViewModel.RequestClose += CloseWindow;
-    }
-
-    private async void SubmitReview_Click(object sender, RoutedEventArgs e)
-    {
-        if (ratingViewModel.SelectedRating != null)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ReviewWindow"/> class.
+        /// </summary>
+        /// <param name="configuration">The application configuration.</param>
+        /// <param name="ratingViewModel">The rating view model.</param>
+        /// <param name="reviewViewModel">The review view model.</param>
+        public ReviewWindow(IConfiguration configuration, RatingViewModel ratingViewModel, ReviewViewModel reviewViewModel)
         {
-            reviewViewModel.AddReview(ratingViewModel.SelectedRating.RatingId);
+            this.configuration = configuration;
+            this.ratingViewModel = ratingViewModel;
+            this.reviewViewModel = reviewViewModel;
+
+            this.InitializeComponent();
+            this.rootGrid.DataContext = reviewViewModel;
+            this.reviewViewModel.RequestClose += this.CloseWindow;
         }
-    }
 
-    private void GenerateAIReview_Click(object sender, RoutedEventArgs e)
-    {
-        var aiReviewWindow = new AIReviewWindow(configuration, OnAIReviewGenerated);
-        aiReviewWindow.Activate();
-    }
+        /// <summary>
+        /// Handles the window close event.
+        /// </summary>
+        /// <param name="sender">Sender object of the event.</param>
+        /// <param name="e">Parameters sent to event.</param>
+        public void CloseWindow(object? sender, EventArgs e)
+        {
+            this.Close();
+        }
 
-    private void OnAIReviewGenerated(string aiReview)
-    {
-        reviewViewModel.ReviewContent = aiReview;
-    }
+        /// <summary>
+        /// Handles the Submit Review button click event.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void SubmitReview_Click(object sender, RoutedEventArgs e)
+        {
+            if (this.ratingViewModel.SelectedRating != null)
+            {
+                this.reviewViewModel.AddReview(this.ratingViewModel.SelectedRating.RatingId);
+            }
+        }
 
-    public void CloseWindow(object sender, EventArgs e)
-    {
-        this.Close();
+        /// <summary>
+        /// Handles the Generate AI Review button click event.
+        /// </summary>
+        /// <param name="sender">The sender of the event.</param>
+        /// <param name="e">Event arguments.</param>
+        private void GenerateAIReview_Click(object sender, RoutedEventArgs e)
+        {
+            var aiReviewWindow = new AIReviewWindow(this.configuration, this.OnAIReviewGenerated);
+            aiReviewWindow.Activate();
+        }
+
+        /// <summary>
+        /// Callback when an AI-generated review is created.
+        /// </summary>
+        /// <param name="aiReview">The generated review text.</param>
+        private void OnAIReviewGenerated(string aiReview)
+        {
+            this.reviewViewModel.ReviewContent = aiReview;
+        }
     }
 }

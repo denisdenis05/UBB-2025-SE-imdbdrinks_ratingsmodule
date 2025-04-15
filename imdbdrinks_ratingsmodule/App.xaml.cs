@@ -1,31 +1,49 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.UI.Xaml;
-using imdbdrinks_ratingsmodule.Repositories;
-using imdbdrinks_ratingsmodule.Services;
-using imdbdrinks_ratingsmodule.ViewModels;
-using System;
+﻿// <copyright file="App.xaml.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
 
 namespace imdbdrinks_ratingsmodule
 {
+    using System;
+    using imdbdrinks_ratingsmodule.Repositories;
+    using imdbdrinks_ratingsmodule.Services;
+    using imdbdrinks_ratingsmodule.ViewModels;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.UI.Xaml;
+
+    /// <summary>
+    /// Represents the main application class for the IMDb Drinks Ratings Module.
+    /// </summary>
     public partial class App : Application
     {
-        private Window? m_window;
-        public IServiceProvider Services { get; }
+        private Window? window;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="App"/> class.
+        /// </summary>
         public App()
         {
             this.InitializeComponent();
 
             // Configure services and DI container
-            Services = ConfigureServices();
+            this.Services = this.ConfigureServices();
         }
 
+        /// <summary>
+        /// Gets the service provider for dependency injection.
+        /// </summary>
+        public IServiceProvider Services { get; }
+
+        /// <summary>
+        /// Handles the application launch event.
+        /// </summary>
+        /// <param name="args">Arguments for launch event.</param>
         protected override void OnLaunched(Microsoft.UI.Xaml.LaunchActivatedEventArgs args)
         {
             // Use DI to get MainWindow with dependencies injected
-            m_window = Services.GetRequiredService<MainWindow>();
-            m_window.Activate();
+            this.window = this.Services.GetRequiredService<MainWindow>();
+            this.window.Activate();
         }
 
         private IServiceProvider ConfigureServices()
