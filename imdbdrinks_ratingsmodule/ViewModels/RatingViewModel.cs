@@ -21,7 +21,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         private const int RatingsCountToUserOffset = 1;
         private const int PlaceholderItemId = 100;
 
-        private readonly RatingService ratingService;
+        private readonly IRatingService ratingService;
         private ObservableCollection<Rating> ratings;
         private Rating? selectedRating;
         private double averageRating;
@@ -32,7 +32,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Initializes a new instance of the <see cref="RatingViewModel"/> class.
         /// </summary>
         /// <param name="ratingService">The service used to manage ratings.</param>
-        public RatingViewModel(RatingService ratingService)
+        public RatingViewModel(IRatingService ratingService)
         {
             this.ratingService = ratingService ?? throw new ArgumentNullException(nameof(ratingService));
             this.ratings = new ObservableCollection<Rating>();

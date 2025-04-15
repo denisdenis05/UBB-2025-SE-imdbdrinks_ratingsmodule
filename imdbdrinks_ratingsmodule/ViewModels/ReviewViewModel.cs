@@ -17,7 +17,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
     {
         private const int DefaultUserId = 999;
 
-        private readonly ReviewService reviewService;
+        private readonly IReviewService reviewService;
         private ObservableCollection<Review> reviews;
         private Review? selectedReview;
         private string reviewContent = string.Empty;
@@ -26,7 +26,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Initializes a new instance of the <see cref="ReviewViewModel"/> class.
         /// </summary>
         /// <param name="reviewService">The service used to manage reviews.</param>
-        public ReviewViewModel(ReviewService reviewService)
+        public ReviewViewModel(IReviewService reviewService)
         {
             this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
             this.reviews = new ObservableCollection<Review>();

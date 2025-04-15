@@ -7,16 +7,6 @@ using Moq;
 
 namespace imdbdrinks_ratingsmodule.Test.Helpers
 {
-    // Interface for mocking the RatingService
-    public interface IRatingService
-    {
-        Rating GetRatingById(int ratingId);
-        IEnumerable<Rating> GetRatingsByProduct(int productId);
-        Rating CreateRating(Rating rating);
-        Rating UpdateRating(Rating rating);
-        void DeleteRatingById(int ratingId);
-        double GetAverageRating(int productId);
-    }
 
     public static class RatingViewModelTestHelper
     {
@@ -83,16 +73,16 @@ namespace imdbdrinks_ratingsmodule.Test.Helpers
             _mockRatingService = mockRatingService;
         }
         
-        public override Rating GetRatingById(int ratingId) => _mockRatingService.GetRatingById(ratingId);
+        public Rating GetRatingById(int ratingId) => _mockRatingService.GetRatingById(ratingId);
         
-        public override IEnumerable<Rating> GetRatingsByProduct(int productId) => _mockRatingService.GetRatingsByProduct(productId);
+        public IEnumerable<Rating> GetRatingsByProduct(int productId) => _mockRatingService.GetRatingsByProduct(productId);
         
-        public override Rating CreateRating(Rating rating) => _mockRatingService.CreateRating(rating);
+        public Rating CreateRating(Rating rating) => _mockRatingService.CreateRating(rating);
         
-        public override Rating UpdateRating(Rating rating) => _mockRatingService.UpdateRating(rating);
+        public Rating UpdateRating(Rating rating) => _mockRatingService.UpdateRating(rating);
         
-        public override void DeleteRatingById(int ratingId) => _mockRatingService.DeleteRatingById(ratingId);
+        public void DeleteRatingById(int ratingId) => _mockRatingService.DeleteRatingById(ratingId);
         
-        public override double GetAverageRating(int productId) => _mockRatingService.GetAverageRating(productId);
+        public double GetAverageRating(int productId) => _mockRatingService.GetAverageRating(productId);
     }
 } 

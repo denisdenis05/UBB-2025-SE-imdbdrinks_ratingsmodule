@@ -13,7 +13,7 @@ namespace imdbdrinks_ratingsmodule.Test
 {
     public class ReviewServiceAddReviewTest
     {
-        private ReviewService _service;
+        private IReviewService _service;
         private Mock<IReviewRepository> _repository;
 
         [SetUp]
