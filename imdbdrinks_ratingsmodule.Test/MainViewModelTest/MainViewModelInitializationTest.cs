@@ -7,7 +7,7 @@ using Moq;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace imdbdrinks_ratingsmodule.Test.MainViewModelTest
+namespace imdbdrinks_ratingsmodule.Test
 {
     public class MainViewModelInitializationTest
     {
