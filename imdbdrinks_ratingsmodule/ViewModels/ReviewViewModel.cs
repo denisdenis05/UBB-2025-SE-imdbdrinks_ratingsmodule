@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using imdbdrinks_ratingsmodule.Domain;
 using imdbdrinks_ratingsmodule.Services;
@@ -7,6 +8,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels;
 
 public class ReviewViewModel : ViewModelBase
 {
+    public event EventHandler RequestClose;
     private readonly ReviewService reviewService;
     private ObservableCollection<Review> reviews;
     private Review selectedReview;
@@ -49,7 +51,6 @@ public class ReviewViewModel : ViewModelBase
 
     public virtual void AddReview(int ratingId)
     {
-        Debug.WriteLine(ReviewContent);
 
         if (string.IsNullOrWhiteSpace(ReviewContent))
         {
@@ -63,14 +64,24 @@ public class ReviewViewModel : ViewModelBase
             Content = ReviewContent,
             IsActive = true
         };
-
-        reviewService.AddReview(newReview);
+        try {
+            reviewService.AddReview(newReview);
+        }
+        catch (Exception ex)
+        {
+            return;
+        }
         LoadReviewsForRating(ratingId);
         ReviewContent = string.Empty;
+        CloseWindow();
     }
 
     public virtual void ClearReviewContent()
     {
         ReviewContent = string.Empty;
+    }
+    private void CloseWindow()
+    {
+        RequestClose?.Invoke(this, EventArgs.Empty);
     }
 }

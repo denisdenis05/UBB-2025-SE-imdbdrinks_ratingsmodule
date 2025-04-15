@@ -49,10 +49,10 @@ public class MainViewModel : ViewModelBase
         HandleRatingSelectionInternal(listView?.SelectedIndex ?? -1);
     }
     
-    // This overload is for testing
+    private const int MinimumValidIndex = 0;
     internal void HandleRatingSelectionInternal(int selectedIndex)
     {
-        if (selectedIndex >= 0 && selectedIndex < ratingViewModel.Ratings.Count)
+        if (selectedIndex >= MinimumValidIndex && selectedIndex < ratingViewModel.Ratings.Count)
         {
             var selectedRating = ratingViewModel.Ratings[selectedIndex];
             ratingViewModel.SelectedRating = selectedRating;
