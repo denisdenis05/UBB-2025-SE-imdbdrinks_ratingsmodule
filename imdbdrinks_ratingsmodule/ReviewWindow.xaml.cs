@@ -24,20 +24,14 @@ public sealed partial class ReviewWindow : Window
 
         this.InitializeComponent();
         this.rootGrid.DataContext = reviewViewModel;
+        this.reviewViewModel.RequestClose += CloseWindow;
     }
 
     private async void SubmitReview_Click(object sender, RoutedEventArgs e)
     {
-        if (string.IsNullOrWhiteSpace(reviewViewModel.ReviewContent))
-        {
-            await EmptyReviewDialog.ShowAsync();
-            return;
-        }
-
         if (ratingViewModel.SelectedRating != null)
         {
             reviewViewModel.AddReview(ratingViewModel.SelectedRating.RatingId);
-            this.Close();
         }
     }
 
@@ -50,5 +44,10 @@ public sealed partial class ReviewWindow : Window
     private void OnAIReviewGenerated(string aiReview)
     {
         reviewViewModel.ReviewContent = aiReview;
+    }
+
+    public void CloseWindow(object sender, EventArgs e)
+    {
+        this.Close();
     }
 }
