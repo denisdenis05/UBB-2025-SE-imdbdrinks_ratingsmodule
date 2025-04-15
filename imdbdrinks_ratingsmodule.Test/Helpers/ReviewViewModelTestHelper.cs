@@ -11,12 +11,6 @@ using System.Threading.Tasks;
 
 namespace imdbdrinks_ratingsmodule.Test.Helpers
 {
-    public interface IReviewService
-    {
-        IEnumerable<Review> GetReviewsByRating(int ratingId);
-        Review AddReview(Review review);
-        void DeleteReviewById(int reviewId);
-    }
 
     public static class ReviewViewModelTestHelper
     {
@@ -90,13 +84,13 @@ namespace imdbdrinks_ratingsmodule.Test.Helpers
             _mockReviewService = mockReviewService;
         }
 
-        public override IEnumerable<Review> GetReviewsByRating(int ratingId)
+        public IEnumerable<Review> GetReviewsByRating(int ratingId)
             => _mockReviewService.GetReviewsByRating(ratingId);
 
-        public override Review AddReview(Review review)
+        public Review AddReview(Review review)
             => _mockReviewService.AddReview(review);
 
-        public override void DeleteReviewById(int reviewId)
+        public void DeleteReviewById(int reviewId)
             => _mockReviewService.DeleteReviewById(reviewId);
     }
 }

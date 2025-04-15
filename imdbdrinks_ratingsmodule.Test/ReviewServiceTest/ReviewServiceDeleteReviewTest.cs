@@ -11,7 +11,7 @@ namespace imdbdrinks_ratingsmodule.Test
 {
     public class ReviewServiceDeleteReviewTest
     {
-        private ReviewService _service;
+        private IReviewService _service;
         private Mock<IReviewRepository> _repository;
 
         [SetUp]
