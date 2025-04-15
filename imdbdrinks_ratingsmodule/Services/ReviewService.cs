@@ -10,12 +10,12 @@
     {
         private readonly IReviewRepository reviewRepository = reviewRepository;
 
-        public IEnumerable<Review> GetReviewsByRating(int ratingId)
+        public virtual IEnumerable<Review> GetReviewsByRating(int ratingId)
         {
             return this.reviewRepository.GetReviewsByRatingId(ratingId);
         }
 
-        public Review AddReview(Review review)
+        public virtual Review AddReview(Review review)
         {
             if (!review.IsValid())
             {
@@ -26,7 +26,7 @@
             return this.reviewRepository.AddOrUpdateReview(review);
         }
 
-        public void DeleteReviewById(int reviewId)
+        public virtual void DeleteReviewById(int reviewId)
         {
             this.reviewRepository.DeleteReviewById(reviewId);
         }
