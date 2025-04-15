@@ -5,7 +5,7 @@ using Microsoft.UI.Xaml.Controls;
 using Moq;
 using System.Collections.ObjectModel;
 
-namespace imdbdrinks_ratingsmodule.Test.MainViewModelTest
+namespace imdbdrinks_ratingsmodule.Test
 {
     public class MainViewModelHandleRatingSelectionTest
     {
@@ -101,6 +101,13 @@ namespace imdbdrinks_ratingsmodule.Test.MainViewModelTest
 
             // Act & Assert
             Assert.DoesNotThrow(() => _viewModel.HandleRatingSelectionInternal(outOfRangeIndex));
+        }
+
+        [Test]
+        public void HandleRatingSelection_NullListView_DoesNotThrow()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _viewModel.HandleRatingSelection(null));
         }
     }
 } 

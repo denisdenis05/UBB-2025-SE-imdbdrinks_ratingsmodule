@@ -3,7 +3,7 @@ using imdbdrinks_ratingsmodule.Test.Helpers;
 using imdbdrinks_ratingsmodule.ViewModels;
 using Moq;
 
-namespace imdbdrinks_ratingsmodule.Test.MainViewModelTest
+namespace imdbdrinks_ratingsmodule.Test
 {
     public class MainViewModelClearSelectedRatingTest
     {
