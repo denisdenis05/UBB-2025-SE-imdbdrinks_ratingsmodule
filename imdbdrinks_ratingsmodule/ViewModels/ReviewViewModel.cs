@@ -29,13 +29,18 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         public ReviewViewModel(ReviewService reviewService)
         {
             this.reviewService = reviewService ?? throw new ArgumentNullException(nameof(reviewService));
-            this.Reviews = new ObservableCollection<Review>();
+            this.reviews = new ObservableCollection<Review>();
         }
+
+        /// <summary>
+        /// Event triggered when the window should be closed.
+        /// </summary>
+        public event EventHandler? RequestClose;
 
         /// <summary>
         /// Gets or sets the collection of reviews.
         /// </summary>
-        public ObservableCollection<Review> Reviews
+        public virtual ObservableCollection<Review> Reviews
         {
             get => this.reviews;
             set => this.SetProperty(ref this.reviews, value);
@@ -44,7 +49,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the selected review.
         /// </summary>
-        public Review? SelectedReview
+        public virtual Review? SelectedReview
         {
             get => this.selectedReview;
             set => this.SetProperty(ref this.selectedReview, value);
@@ -53,7 +58,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the content of the review.
         /// </summary>
-        public string ReviewContent
+        public virtual string ReviewContent
         {
             get => this.reviewContent;
             set => this.SetProperty(ref this.reviewContent, value);
@@ -63,7 +68,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Loads reviews for a specific rating based on its ID.
         /// </summary>
         /// <param name="ratingId">The ID of the rating whose reviews are to be loaded.</param>
-        public void LoadReviewsForRating(int ratingId)
+        public virtual void LoadReviewsForRating(int ratingId)
         {
             var reviewsList = this.reviewService.GetReviewsByRating(ratingId);
             this.Reviews.Clear();
@@ -77,10 +82,8 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Adds a new review for a specified rating.
         /// </summary>
         /// <param name="ratingId">The ID of the rating to which the review is to be added.</param>
-        public void AddReview(int ratingId)
+        public virtual void AddReview(int ratingId)
         {
-            Debug.WriteLine(this.ReviewContent);
-
             if (string.IsNullOrWhiteSpace(this.ReviewContent))
             {
                 return;
@@ -94,17 +97,31 @@ namespace imdbdrinks_ratingsmodule.ViewModels
                 IsActive = true,
             };
 
-            this.reviewService.AddReview(newReview);
+            try
+            {
+                this.reviewService.AddReview(newReview);
+            }
+            catch (Exception exception)
+            {
+                return;
+            }
+
             this.LoadReviewsForRating(ratingId);
             this.ReviewContent = string.Empty;
+            this.CloseWindow();
         }
 
         /// <summary>
         /// Clears the content of the current review.
         /// </summary>
-        public void ClearReviewContent()
+        public virtual void ClearReviewContent()
         {
             this.ReviewContent = string.Empty;
+        }
+
+        private void CloseWindow()
+        {
+            this.RequestClose?.Invoke(this, EventArgs.Empty);
         }
     }
 }

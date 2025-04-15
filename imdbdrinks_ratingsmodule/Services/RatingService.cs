@@ -65,7 +65,7 @@ namespace imdbdrinks_ratingsmodule.Services
         /// <param name="rating">The rating to update.</param>
         /// <returns>The updated <see cref="Rating"/> instance.</returns>
         /// <exception cref="System.ArgumentException">Thrown when the rating is invalid.</exception>
-        public Rating UpdateRating(Rating rating)
+        public virtual Rating UpdateRating(Rating rating)
         {
             if (!rating.IsValid())
             {

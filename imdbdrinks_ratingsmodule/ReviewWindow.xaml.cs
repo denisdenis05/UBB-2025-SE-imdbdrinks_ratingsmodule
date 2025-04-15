@@ -32,6 +32,17 @@ namespace imdbdrinks_ratingsmodule
 
             this.InitializeComponent();
             this.rootGrid.DataContext = reviewViewModel;
+            this.reviewViewModel.RequestClose += this.CloseWindow;
+        }
+
+        /// <summary>
+        /// Handles the window close event.
+        /// </summary>
+        /// <param name="sender">Sender object of the event.</param>
+        /// <param name="e">Parameters sent to event.</param>
+        public void CloseWindow(object? sender, EventArgs e)
+        {
+            this.Close();
         }
 
         /// <summary>
@@ -39,18 +50,11 @@ namespace imdbdrinks_ratingsmodule
         /// </summary>
         /// <param name="sender">The sender of the event.</param>
         /// <param name="e">Event arguments.</param>
-        private async void SubmitReview_Click(object sender, RoutedEventArgs e)
+        private void SubmitReview_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(this.reviewViewModel.ReviewContent))
-            {
-                await this.EmptyReviewDialog.ShowAsync();
-                return;
-            }
-
             if (this.ratingViewModel.SelectedRating != null)
             {
                 this.reviewViewModel.AddReview(this.ratingViewModel.SelectedRating.RatingId);
-                this.Close();
             }
         }
 

@@ -43,7 +43,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the collection of ratings.
         /// </summary>
-        public ObservableCollection<Rating> Ratings
+        public virtual ObservableCollection<Rating> Ratings
         {
             get => this.ratings;
             set => this.SetProperty(ref this.ratings, value);
@@ -52,7 +52,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the selected rating.
         /// </summary>
-        public Rating? SelectedRating
+        public virtual Rating? SelectedRating
         {
             get => this.selectedRating;
             set => this.SetProperty(ref this.selectedRating, value);
@@ -61,7 +61,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the average rating value, rounded to two decimal places.
         /// </summary>
-        public double AverageRating
+        public virtual double AverageRating
         {
             get => this.averageRating;
             set => this.SetProperty(ref this.averageRating, Math.Round(value, 2));
@@ -70,7 +70,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the collection of bottle assets.
         /// </summary>
-        public ObservableCollection<BottleAsset> Bottles
+        public virtual ObservableCollection<BottleAsset> Bottles
         {
             get => this.bottles;
             set => this.SetProperty(ref this.bottles, value);
@@ -79,7 +79,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Gets or sets the rating score.
         /// </summary>
-        public int RatingScore
+        public virtual int RatingScore
         {
             get => this.ratingScore;
             set => this.SetProperty(ref this.ratingScore, value);
@@ -89,12 +89,12 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Updates the bottle ratings based on the clicked bottle number.
         /// </summary>
         /// <param name="clickedBottleNumber">The number of the clicked bottle.</param>
-        public void UpdateBottleRating(int clickedBottleNumber)
+        public virtual void UpdateBottleRating(int clickedBottleNumber)
         {
-            for (int i = RatingDomainConstants.MinRatingValue; i <= RatingDomainConstants.MaxRatingValue; i++)
+            foreach (var currentRatingBottle in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
             {
-                int bottleIndex = i - BottleRatingToIndexOffset;
-                this.Bottles[bottleIndex].ImageSource = i <= clickedBottleNumber
+                var bottleIndex = currentRatingBottle - BottleRatingToIndexOffset;
+                this.Bottles[bottleIndex].ImageSource = currentRatingBottle <= clickedBottleNumber
                     ? AssetConstants.FilledBottlePath
                     : AssetConstants.EmptyBottlePath;
             }
@@ -105,7 +105,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <summary>
         /// Adds a new rating based on the current rating score.
         /// </summary>
-        public void AddRating()
+        public virtual void AddRating()
         {
             if (this.RatingScore < RatingDomainConstants.MinRatingValue)
             {
@@ -127,7 +127,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// Loads ratings for a specific product identified by its ID.
         /// </summary>
         /// <param name="productId">The ID of the product whose ratings are to be loaded.</param>
-        public void LoadRatingsForProduct(int productId)
+        public virtual void LoadRatingsForProduct(int productId)
         {
             var ratingsForProduct = this.ratingService.GetRatingsByProduct(productId);
             var ratingsOrderedByNewest = ratingsForProduct.Reverse();
@@ -141,10 +141,13 @@ namespace imdbdrinks_ratingsmodule.ViewModels
             this.AverageRating = this.ratingService.GetAverageRating(productId);
         }
 
-        private void InitializeBottles()
+        /// <summary>
+        /// Initializes the bottles collection with empty bottle assets.
+        /// </summary>
+        protected virtual void InitializeBottles()
         {
             this.Bottles = new ObservableCollection<BottleAsset>();
-            for (int i = RatingDomainConstants.MinRatingValue; i <= RatingDomainConstants.MaxRatingValue; i++)
+            foreach (var currentRating in Enumerable.Range(RatingDomainConstants.MinRatingValue, RatingDomainConstants.MaxRatingValue))
             {
                 var bottleToAdd = new BottleAsset { ImageSource = AssetConstants.EmptyBottlePath };
                 this.Bottles.Add(bottleToAdd);
@@ -153,7 +156,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
 
         private int GetUserId()
         {
-            return this.ratings.Count + RatingsCountToUserOffset;
+            return this.Ratings.Count + RatingsCountToUserOffset;
         }
     }
 }

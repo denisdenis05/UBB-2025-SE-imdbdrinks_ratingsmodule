@@ -31,7 +31,7 @@ namespace imdbdrinks_ratingsmodule.Services
         /// </summary>
         /// <param name="ratingId">The rating identifier.</param>
         /// <returns>A collection of <see cref="Review"/> instances for the rating.</returns>
-        public IEnumerable<Review> GetReviewsByRating(int ratingId)
+        public virtual IEnumerable<Review> GetReviewsByRating(int ratingId)
         {
             return this.reviewRepository.GetReviewsByRatingId(ratingId);
         }
@@ -42,7 +42,7 @@ namespace imdbdrinks_ratingsmodule.Services
         /// <param name="review">The review to add.</param>
         /// <returns>The added <see cref="Review"/> instance.</returns>
         /// <exception cref="ArgumentException">Thrown when the review is invalid.</exception>
-        public Review AddReview(Review review)
+        public virtual Review AddReview(Review review)
         {
             if (!review.IsValid())
             {
@@ -57,7 +57,7 @@ namespace imdbdrinks_ratingsmodule.Services
         /// Deletes a review by its unique identifier.
         /// </summary>
         /// <param name="reviewId">The review identifier.</param>
-        public void DeleteReviewById(int reviewId)
+        public virtual void DeleteReviewById(int reviewId)
         {
             this.reviewRepository.DeleteReviewById(reviewId);
         }

@@ -13,6 +13,9 @@ namespace imdbdrinks_ratingsmodule.ViewModels
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
+        private const int MinimumValidIndex = 0;
+        private const int InvalidSelectionIndex = -1;
+
         private readonly IConfiguration configuration;
         private RatingViewModel ratingViewModel;
         private ReviewViewModel reviewViewModel;
@@ -69,12 +72,7 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         /// <param name="listView">The list view containing the ratings.</param>
         public void HandleRatingSelection(ListView listView)
         {
-            if (listView?.SelectedIndex >= 0)
-            {
-                var selectedRating = this.ratingViewModel.Ratings[listView.SelectedIndex];
-                this.ratingViewModel.SelectedRating = selectedRating;
-                this.reviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
-            }
+            this.HandleRatingSelectionInternal(listView?.SelectedIndex ?? InvalidSelectionIndex);
         }
 
         /// <summary>
@@ -83,6 +81,20 @@ namespace imdbdrinks_ratingsmodule.ViewModels
         public void ClearSelectedRating()
         {
             this.ratingViewModel.SelectedRating = null!;
+        }
+
+        /// <summary>
+        /// Handles the rating selection change event internally.
+        /// </summary>
+        /// <param name="selectedIndex">The selection index.</param>
+        internal void HandleRatingSelectionInternal(int selectedIndex)
+        {
+            if (selectedIndex >= MinimumValidIndex && selectedIndex < this.ratingViewModel.Ratings.Count)
+            {
+                var selectedRating = this.ratingViewModel.Ratings[selectedIndex];
+                this.ratingViewModel.SelectedRating = selectedRating;
+                this.reviewViewModel.LoadReviewsForRating(selectedRating.RatingId);
+            }
         }
 
         /// <summary>
